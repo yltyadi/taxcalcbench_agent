@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "taxcalcbench-agent"
+version = "0.2.0"
+description = "A planner, writer and independent reviewer creating tax questions from official local laws"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "openai-agents",
+  "pydantic>=2",
+  "httpx>=0.28",
+  "truststore",
+  "beautifulsoup4",
+  "python-dotenv",
+  "pypdf",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio", "ruff"]
+
+[project.scripts]
+taxcalcbench = "taxcalcbench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 110
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]

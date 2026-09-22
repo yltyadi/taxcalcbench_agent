@@ -1,0 +1,334 @@
+{
+  "country": "KZ",
+  "language": "ru",
+  "sources": {
+    "allowed_hosts": {
+      "www.gov.kz": [
+        "/uploads/2025/9/17/cf875202d0387c1ad6d110930e5b3b23_original\\.1690294\\.docx"
+      ],
+      "old.adilet.zan.kz": [
+        "/rus/docs/(?:K010000209_|K080000099_|K1700000120|K2500000214|Z010000210_|Z080000100_|Z1700000121)(?:/history)?",
+        "/rus/archive/docs/(?:K010000209_|K080000099_|K1700000120|K2500000214|Z010000210_|Z080000100_|Z1700000121)/[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}",
+        "/rus/docs/(?:K|Z|P|V)[0-9_]+",
+        "/rus/archive/docs/(?:K|Z|P|V)[0-9_]+/[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}"
+      ]
+    },
+    "seeds": [
+      {
+        "url": "https://www.gov.kz/uploads/2025/9/17/cf875202d0387c1ad6d110930e5b3b23_original.1690294.docx",
+        "title": "Налоговый кодекс Республики Казахстан, 18 июля 2025 года № 214-VIII",
+        "kind": "law",
+        "sha256": "fccdc5de271a7e2452fe29cd8820c07fa53b76a690ecd05cd78483cd02596c05",
+        "observed_from": "https://www.gov.kz/memleket/entities/kgd/documents/details/897221?lang=ru",
+        "edition_note": "Официальный DOCX на странице КГД; дату применимости каждой нормы устанавливают по тексту."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/archive/docs/K010000209_/21.11.2008",
+        "title": "Налоговый кодекс Республики Казахстан от 12 июня 2001 года № 209; архивная редакция 21.11.2008",
+        "kind": "law",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/K010000209_/history",
+        "edition_note": "Архивная редакция 21.11.2008, ссылка проверена на официальной странице истории. Дата редакции не заменяет дату вступления в силу каждой нормы; применимость проверяется по тексту и вводному закону."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/archive/docs/K080000099_/11.07.2017",
+        "title": "Налоговый кодекс Республики Казахстан от 10 декабря 2008 года № 99-IV; архивная редакция 11.07.2017",
+        "kind": "law",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/K080000099_/history",
+        "edition_note": "Архивная редакция 11.07.2017, ссылка проверена на официальной странице истории. Дата редакции не заменяет дату вступления в силу каждой нормы; применимость проверяется по тексту и вводному закону."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/archive/docs/K1700000120/01.01.2020",
+        "title": "Налоговый кодекс Республики Казахстан от 25 декабря 2017 года № 120-VI; архивная редакция 01.01.2020",
+        "kind": "law",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/K1700000120/history",
+        "edition_note": "Архивная редакция 01.01.2020, ссылка проверена на официальной странице истории. Дата редакции не заменяет дату вступления в силу каждой нормы; применимость проверяется по тексту и вводному закону."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/archive/docs/K1700000120/01.01.2025",
+        "title": "Налоговый кодекс Республики Казахстан от 25 декабря 2017 года № 120-VI; архивная редакция 01.01.2025",
+        "kind": "law",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/K1700000120/history",
+        "edition_note": "Архивная редакция 01.01.2025, ссылка проверена на официальной странице истории. Дата редакции не заменяет дату вступления в силу каждой нормы; применимость проверяется по тексту и вводному закону."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/K2500000214",
+        "title": "НАЛОГОВЫЙ КОДЕКС РЕСПУБЛИКИ КАЗАХСТАН от 18 июля 2025 года № 214-VIII",
+        "kind": "law",
+        "edition_note": "Текущая страница официального поддомена Әділет; применимость и переходные положения проверяются по статье 848 и конкретным нормам."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/Z010000210_",
+        "title": "О введении в действие Налогового кодекса, 12 июня 2001 года № 210",
+        "kind": "law",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/K010000209_",
+        "edition_note": "Официальный вводный закон; текущая редакция может содержать позднейшие изменения. Применимость исторических положений проверяется отдельно."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/Z080000100_",
+        "title": "О введении в действие Налогового кодекса, 10 декабря 2008 года № 100-IV",
+        "kind": "law",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/K080000099_",
+        "edition_note": "Официальный вводный закон; текущая редакция может содержать позднейшие изменения. Применимость исторических положений проверяется отдельно."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/Z1700000121",
+        "title": "О введении в действие Налогового кодекса, 25 декабря 2017 года № 121-VI",
+        "kind": "law",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/K1700000120",
+        "edition_note": "Официальный вводный закон; текущая редакция может содержать позднейшие изменения. Применимость исторических положений проверяется отдельно."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/K010000209_/history",
+        "title": "Официальная история редакций K010000209_",
+        "kind": "navigation",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/K010000209_"
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/K080000099_/history",
+        "title": "Официальная история редакций K080000099_",
+        "kind": "navigation",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/K080000099_"
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/K1700000120/history",
+        "title": "Официальная история редакций K1700000120",
+        "kind": "navigation",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/K1700000120"
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/Z070000008_",
+        "title": "О республиканском бюджете на 2008 год, 6 декабря 2007 года № 8-IV",
+        "kind": "law",
+        "edition_note": "Официальный национальный акт. Проверять дату действия конкретной нормы, изменения в течение года, переходные положения и связанные акты по тексту.",
+        "observed_from": "https://old.adilet.zan.kz/rus/archive/docs/K010000209_/21.11.2008"
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/Z080000096_",
+        "title": "О республиканском бюджете на 2009–2011 годы, 4 декабря 2008 года № 96-IV",
+        "kind": "law",
+        "edition_note": "Официальный национальный акт. Проверять дату действия конкретной нормы, изменения в течение года, переходные положения и связанные акты по тексту."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/Z1500000426",
+        "title": "О республиканском бюджете на 2016–2018 годы, 30 ноября 2015 года № 426-V",
+        "kind": "law",
+        "edition_note": "Официальный национальный акт. Проверять дату действия конкретной нормы, изменения в течение года, переходные положения и связанные акты по тексту."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/V060004501_",
+        "title": "Об утверждении Правил исчисления социального налога, 14 декабря 2006 года № 641",
+        "kind": "law",
+        "edition_note": "Официальный национальный акт. Проверять дату действия конкретной нормы, изменения в течение года, переходные положения и связанные акты по тексту.",
+        "observed_from": "https://old.adilet.zan.kz/rus/archive/docs/K010000209_/21.11.2008"
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/archive/docs/Z030000405_/19.12.2007",
+        "title": "Об обязательном социальном страховании, 25 апреля 2003 года № 405-II; редакция 19.12.2007",
+        "kind": "law",
+        "edition_note": "Официальный национальный акт. Проверять дату действия конкретной нормы, изменения в течение года, переходные положения и связанные акты по тексту.",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/Z030000405_/history"
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/archive/docs/Z030000405_/01.01.2016",
+        "title": "Об обязательном социальном страховании, 25 апреля 2003 года № 405-II; редакция 01.01.2016",
+        "kind": "law",
+        "edition_note": "Официальный национальный акт. Проверять дату действия конкретной нормы, изменения в течение года, переходные положения и связанные акты по тексту.",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/Z030000405_/history"
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/archive/docs/P040000683_/29.12.2007",
+        "title": "Правила исчисления и перечисления социальных отчислений, постановление 21 июня 2004 года № 683; редакция 29.12.2007",
+        "kind": "law",
+        "edition_note": "Официальный национальный акт. Проверять дату действия конкретной нормы, изменения в течение года, переходные положения и связанные акты по тексту.",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/P040000683_/history"
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/archive/docs/Z1900000286/26.12.2019",
+        "title": "Об обязательном социальном страховании, 26 декабря 2019 года № 286-VI; первоначальная редакция",
+        "kind": "law",
+        "edition_note": "Официальный национальный акт. Проверять дату действия конкретной нормы, изменения в течение года, переходные положения и связанные акты по тексту.",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/Z1900000286/history"
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/archive/docs/K080000099_/10.12.2008",
+        "title": "Налоговый кодекс Республики Казахстан от 10 декабря 2008 года № 99-IV; первоначальная редакция",
+        "kind": "law",
+        "edition_note": "Официальный национальный акт. Проверять дату действия конкретной нормы, изменения в течение года, переходные положения и связанные акты по тексту.",
+        "observed_from": "https://old.adilet.zan.kz/rus/docs/K080000099_/history"
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/Z1900000276",
+        "title": "О республиканском бюджете на 2020–2022 годы, 4 декабря 2019 года № 276-VI",
+        "kind": "law",
+        "edition_note": "Официальный национальный бюджетный закон. Проверять действие параметра для конкретной даты и изменения в течение года; применять дату отсчета, заданную соответствующей налоговой нормой."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/Z2300000043",
+        "title": "О республиканском бюджете на 2024–2026 годы, 5 декабря 2023 года № 43-VIII",
+        "kind": "law",
+        "edition_note": "Официальный национальный бюджетный закон. Проверять действие параметра для конкретной даты и изменения в течение года; применять дату отсчета, заданную соответствующей налоговой нормой."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/Z2500000239",
+        "title": "О республиканском бюджете на 2026–2028 годы, 8 декабря 2025 года № 239-VIII",
+        "kind": "law",
+        "edition_note": "Официальный национальный бюджетный закон. Проверять действие параметра для конкретной даты и изменения в течение года; применять дату отсчета, заданную соответствующей налоговой нормой."
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/Z1800000203",
+        "title": "№ 203-VI",
+        "kind": "law",
+        "edition_note": "Edition and applicability must be checked in source text"
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/Z2000000382",
+        "title": "№ 382-VI",
+        "kind": "law",
+        "edition_note": "Edition and applicability must be checked in source text"
+      },
+      {
+        "url": "https://old.adilet.zan.kz/rus/docs/Z1600000026",
+        "title": "№ 26-VI",
+        "kind": "law",
+        "edition_note": "Edition and applicability must be checked in source text"
+      }
+    ],
+    "link_rules": [
+      {
+        "url_pattern": "https://old\\.adilet\\.zan\\.kz/rus/archive/docs/K010000209_/21\\.11\\.2008",
+        "kind": "law",
+        "priority": 5
+      },
+      {
+        "url_pattern": "https://old\\.adilet\\.zan\\.kz/rus/archive/docs/K080000099_/11\\.07\\.2017",
+        "kind": "law",
+        "priority": 5
+      },
+      {
+        "url_pattern": "https://old\\.adilet\\.zan\\.kz/rus/archive/docs/K1700000120/01\\.01\\.2020",
+        "kind": "law",
+        "priority": 5
+      },
+      {
+        "url_pattern": "https://old\\.adilet\\.zan\\.kz/rus/archive/docs/K1700000120/01\\.01\\.2025",
+        "kind": "law",
+        "priority": 5
+      },
+      {
+        "url_pattern": "https://old\\.adilet\\.zan\\.kz/rus/docs/K2500000214",
+        "kind": "law",
+        "priority": 5
+      },
+      {
+        "url_pattern": "https://old\\.adilet\\.zan\\.kz/rus/docs/Z010000210_",
+        "kind": "law",
+        "priority": 5
+      },
+      {
+        "url_pattern": "https://old\\.adilet\\.zan\\.kz/rus/docs/Z080000100_",
+        "kind": "law",
+        "priority": 5
+      },
+      {
+        "url_pattern": "https://old\\.adilet\\.zan\\.kz/rus/docs/Z1700000121",
+        "kind": "law",
+        "priority": 5
+      },
+      {
+        "url_pattern": "https://old\\.adilet\\.zan\\.kz/rus/docs/K010000209_/history",
+        "kind": "navigation",
+        "priority": 10
+      },
+      {
+        "url_pattern": "https://old\\.adilet\\.zan\\.kz/rus/docs/K080000099_/history",
+        "kind": "navigation",
+        "priority": 10
+      },
+      {
+        "url_pattern": "https://old\\.adilet\\.zan\\.kz/rus/docs/K1700000120/history",
+        "kind": "navigation",
+        "priority": 10
+      }
+    ],
+    "html_selectors": {
+      "old.adilet.zan.kz": "article"
+    },
+    "section_heading_pattern": "^[ \\t\\u00a0]*Статья[ \\t\\u00a0]+[0-9]+(?:-[0-9]+)?\\.",
+    "max_documents": 100,
+    "max_pages": 150,
+    "max_depth": 4,
+    "max_links_per_page": 1000,
+    "max_bytes": 20971520,
+    "max_pdf_pages": 2000,
+    "timeout_seconds": 20,
+    "retries": 1,
+    "max_redirects": 3
+  },
+  "currency": "KZT",
+  "runtime": {
+    "model": "gemini-3.8-flash",
+    "reasoning_effort": "low",
+    "create_reasoning_effort": "high",
+    "max_output_tokens": 65536,
+    "timeout_seconds": 300,
+    "review_reasoning_effort": "high"
+  },
+  "generation": {
+    "families": 50,
+    "regular_questions_per_family": 5,
+    "missing_information_per_family": 1,
+    "min_periods_per_family": 2,
+    "categories": [
+      {
+        "code": "1000",
+        "label": "Income, profits and capital gains",
+        "weight": 1
+      },
+      {
+        "code": "2000",
+        "label": "Social security contributions",
+        "weight": 1
+      },
+      {
+        "code": "3000",
+        "label": "Payroll and workforce taxes",
+        "weight": 1
+      },
+      {
+        "code": "4000",
+        "label": "Property taxes",
+        "weight": 1
+      },
+      {
+        "code": "5000",
+        "label": "Goods and services taxes",
+        "weight": 1
+      },
+      {
+        "code": "6000",
+        "label": "Other taxes",
+        "weight": 1
+      }
+    ],
+    "periods": [
+      {
+        "label": "2020-2026",
+        "start": 2020,
+        "end": 2026,
+        "weight": 3
+      },
+      {
+        "label": "2010-2019",
+        "start": 2010,
+        "end": 2019,
+        "weight": 1
+      },
+      {
+        "label": "2000-2009",
+        "start": 2000,
+        "end": 2009,
+        "weight": 1
+      }
+    ]
+  }
+}

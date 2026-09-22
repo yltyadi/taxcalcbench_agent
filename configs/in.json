@@ -1,0 +1,165 @@
+{
+  "country": "IN",
+  "language": "en",
+  "currency": "INR",
+  "runtime": {
+    "model": "gemini-3.8-flash",
+    "reasoning_effort": "low",
+    "create_reasoning_effort": "high",
+    "max_output_tokens": 65536,
+    "timeout_seconds": 300,
+    "review_reasoning_effort": "high"
+  },
+  "generation": {
+    "blocked_reason": "The official corpus lacks a readable, downloadable 2000s Finance Act income-tax rate schedule. The live temporal family check stopped on this source gap. Obtain and verify the missing historical official evidence before enabling generation; keep the configured year coverage unchanged.",
+    "families": 50,
+    "regular_questions_per_family": 5,
+    "missing_information_per_family": 1,
+    "min_periods_per_family": 2,
+    "categories": [
+      {
+        "code": "1000",
+        "label": "Income, profits and capital gains",
+        "weight": 1
+      },
+      {
+        "code": "2000",
+        "label": "Social security contributions",
+        "weight": 1
+      },
+      {
+        "code": "3000",
+        "label": "Payroll and workforce taxes",
+        "weight": 1
+      },
+      {
+        "code": "4000",
+        "label": "Property taxes",
+        "weight": 1
+      },
+      {
+        "code": "5000",
+        "label": "Goods and services taxes",
+        "weight": 1
+      },
+      {
+        "code": "6000",
+        "label": "Other taxes",
+        "weight": 1
+      }
+    ],
+    "periods": [
+      {
+        "label": "2020-2026",
+        "start": 2020,
+        "end": 2026,
+        "weight": 3
+      },
+      {
+        "label": "2010-2019",
+        "start": 2010,
+        "end": 2019,
+        "weight": 1
+      },
+      {
+        "label": "2000-2009",
+        "start": 2000,
+        "end": 2009,
+        "weight": 1
+      }
+    ]
+  },
+  "sources": {
+    "allowed_hosts": {
+      "dor.gov.in": [
+        "/files/acts_files/IT%20Act%20%28English%29_0\\.pdf",
+        "/files/rules_files/IT%20Rules_1\\.pdf"
+      ],
+      "gstcouncil.gov.in": [
+        "/sites/default/files/2024\\-04/finance_act_2020\\.pdf",
+        "/sites/default/files/2024\\-04/annexure\\-3_cgst\\-act_2017\\.pdf",
+        "/sites/default/files/2024\\-03/annexure\\-5\\-igst\\-act_2017\\.pdf",
+        "/sites/default/files/2024\\-03/annexure\\-3_cgst\\-amendment\\-act_2018\\.pdf",
+        "/sites/default/files/2024\\-04/01062021\\-cgst\\-rules\\-2017\\-part\\-a\\-rules\\.pdf",
+        "/sites/default/files/2024\\-05/download_4_0\\.pdf",
+        "/sites/default/files/2024\\-04/notfctn\\-9\\-central\\-tax\\-english\\.pdf"
+      ]
+    },
+    "seeds": [
+      {
+        "url": "https://dor.gov.in/files/acts_files/IT%20Act%20%28English%29_0.pdf",
+        "title": "Income-tax Act 1961 as amended by Finance Act 2011, with Finance Act 2011 and related legislation",
+        "kind": "law",
+        "edition_note": "This is the 2011 compilation, not the original 1961 text or a complete 2000s snapshot. For an earlier year use only provisions with explicit historical text and effective-date support. Editorial commentary is not legislation.",
+        "observed_from": "https://dor.gov.in/income-tax-act-rules-2011"
+      },
+      {
+        "url": "https://dor.gov.in/files/rules_files/IT%20Rules_1.pdf",
+        "title": "Income-tax Rules 1962, Department of Revenue 2011 compilation",
+        "kind": "law",
+        "edition_note": "2011 compilation; check each rule and amendment date. Do not treat this as a current consolidated rulebook.",
+        "observed_from": "https://dor.gov.in/revenue-hqr-rules"
+      },
+      {
+        "url": "https://gstcouncil.gov.in/sites/default/files/2024-04/finance_act_2020.pdf",
+        "title": "Finance Act 2020, Gazette of 27 March 2020 including First Schedule",
+        "kind": "law",
+        "edition_note": "Enacted national Finance Act, including income-tax rates and amendments. Assessment year and financial year differ; match commencement and the relevant schedule part.",
+        "observed_from": "https://gstcouncil.gov.in/finance-act"
+      },
+      {
+        "url": "https://gstcouncil.gov.in/sites/default/files/2024-04/annexure-3_cgst-act_2017.pdf",
+        "title": "Central Goods and Services Tax Act 2017, original enacted text",
+        "kind": "law",
+        "edition_note": "Original 2017 Act, not a 2024 consolidation. Later amendments and commencement notifications must be read separately. Central GST alone does not establish the State GST component.",
+        "observed_from": "https://gstcouncil.gov.in/central-gst"
+      },
+      {
+        "url": "https://gstcouncil.gov.in/sites/default/files/2024-03/annexure-5-igst-act_2017.pdf",
+        "title": "Integrated Goods and Services Tax Act 2017, original enacted text",
+        "kind": "law",
+        "edition_note": "Original 2017 Act, not a 2024 consolidation. A charging provision is not the notified commodity or service rate schedule.",
+        "observed_from": "https://gstcouncil.gov.in/igst"
+      },
+      {
+        "url": "https://gstcouncil.gov.in/sites/default/files/2024-03/annexure-3_cgst-amendment-act_2018.pdf",
+        "title": "Central Goods and Services Tax Amendment Act 2018",
+        "kind": "law",
+        "edition_note": "Amending Act; do not assume assent is commencement for provisions requiring notification.",
+        "observed_from": "https://gstcouncil.gov.in/central-gst"
+      },
+      {
+        "url": "https://gstcouncil.gov.in/sites/default/files/2024-04/01062021-cgst-rules-2017-part-a-rules.pdf",
+        "title": "Central Goods and Services Tax Rules 2017, Part A updated to 1 June 2021",
+        "kind": "law",
+        "edition_note": "Consolidated rules to 1 June 2021. Establish historical applicability from dated amendments; no assumption that all rules applied in 2017 or after 2021.",
+        "observed_from": "https://gstcouncil.gov.in/CGST-Rules"
+      },
+      {
+        "url": "https://gstcouncil.gov.in/sites/default/files/2024-05/download_4_0.pdf",
+        "title": "Notification 1/2017 Central Tax (Rate), original goods rate schedules",
+        "kind": "law",
+        "edition_note": "Original national CGST goods rate notification of 28 June 2017. It does not establish later amended rates, State GST or IGST rates.",
+        "observed_from": "https://gstcouncil.gov.in/node/4422"
+      },
+      {
+        "url": "https://gstcouncil.gov.in/sites/default/files/2024-04/notfctn-9-central-tax-english.pdf",
+        "title": "Notification 9/2017 Central Tax, CGST commencement on 1 July 2017",
+        "kind": "law",
+        "edition_note": "Commencement notification for specified CGST Act sections. Read the exact listed provisions; it is not a rate schedule.",
+        "observed_from": "https://gstcouncil.gov.in/node/3932"
+      }
+    ],
+    "link_rules": [],
+    "max_documents": 9,
+    "max_pages": 9,
+    "max_depth": 0,
+    "max_links_per_page": 100,
+    "max_bytes": 20971520,
+    "max_pdf_pages": 2000,
+    "timeout_seconds": 40,
+    "retries": 1,
+    "max_redirects": 3,
+    "pdf_text_backend": "pdftotext"
+  }
+}

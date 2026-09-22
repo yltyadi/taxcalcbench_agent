@@ -1,0 +1,214 @@
+{
+  "runtime": {
+    "model": "gemini-3.8-flash",
+    "reasoning_effort": "low",
+    "create_reasoning_effort": "high",
+    "max_output_tokens": 65536,
+    "timeout_seconds": 300,
+    "review_reasoning_effort": "high"
+  },
+  "generation": {
+    "blocked_reason": "Historical official Arabic laws are scanned or produce corrupted text. Only two recent laws passed extraction checks; the required historical periods cannot be supported. Keep generation disabled until readable official historical editions or a verified OCR workflow are available.",
+    "families": 50,
+    "regular_questions_per_family": 5,
+    "missing_information_per_family": 1,
+    "min_periods_per_family": 2,
+    "categories": [
+      {
+        "code": "1000",
+        "label": "Income, profits and capital gains",
+        "weight": 1
+      },
+      {
+        "code": "2000",
+        "label": "Social security contributions",
+        "weight": 1
+      },
+      {
+        "code": "3000",
+        "label": "Payroll and workforce taxes",
+        "weight": 1
+      },
+      {
+        "code": "4000",
+        "label": "Property taxes",
+        "weight": 1
+      },
+      {
+        "code": "5000",
+        "label": "Goods and services taxes",
+        "weight": 1
+      },
+      {
+        "code": "6000",
+        "label": "Other taxes",
+        "weight": 1
+      }
+    ],
+    "periods": [
+      {
+        "label": "2020-2026",
+        "start": 2020,
+        "end": 2026,
+        "weight": 3
+      },
+      {
+        "label": "2010-2019",
+        "start": 2010,
+        "end": 2019,
+        "weight": 1
+      },
+      {
+        "label": "2000-2009",
+        "start": 2000,
+        "end": 2009,
+        "weight": 1
+      }
+    ]
+  },
+  "country": "EG",
+  "language": "ar",
+  "currency": "EGP",
+  "sources": {
+    "allowed_hosts": {
+      "portal.eta.gov.eg": [
+        "/sites/default/files/2024\\-03/law_no\\.91\\-2005\\.pdf",
+        "/sites/default/files/2024\\-03/law_no\\.991\\-2005\\.pdf",
+        "/sites/default/files/2024\\-03/law_no\\.1\\-2007\\.pdf",
+        "/sites/default/files/2024\\-03/law_no\\.96\\-2015\\.pdf",
+        "/sites/default/files/2024\\-03/law_no\\.26\\-2020\\.pdf",
+        "/sites/default/files/2024\\-03/law_no\\.7\\-2024\\.pdf",
+        "/sites/default/files/2025\\-02/law_no\\.6\\.of_\\.2025\\.pdf",
+        "/sites/default/files/2024\\-03/vat\\-law_no\\.67\\-2016\\.pdf",
+        "/sites/default/files/2024\\-03/vat\\-law_no\\.66\\-2017\\.pdf",
+        "/sites/default/files/2024\\-03/vat\\-law_no\\.3\\-2022\\.pdf",
+        "/sites/default/files/2024\\-03/law_no\\.206\\-2020\\.pdf",
+        "/sites/default/files/2026\\-03/law\\.no_\\.196\\.of_\\.2008\\.pdf",
+        "/sites/default/files/2025\\-03/law\\.no_\\.152\\.for_\\.2020\\.pdf"
+      ],
+      "eta.gov.eg": [
+        "/sites/default/files/2026\\-05/law\\.no_\\.147\\.of_\\.1984\\.pdf",
+        "/sites/default/files/2026\\-05/law\\.no_\\.111\\.of_\\.1981\\.pdf"
+      ]
+    },
+    "seeds": [
+      {
+        "url": "https://portal.eta.gov.eg/sites/default/files/2024-03/law_no.91-2005.pdf",
+        "title": "قانون رقم 91 لسنة 2005 بإصدار قانون الضريبة على الدخل",
+        "kind": "law",
+        "observed_from": "https://portal.eta.gov.eg/ar/content/qwanyn-aldrybt-ly-aldkhl",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://portal.eta.gov.eg/sites/default/files/2024-03/law_no.991-2005.pdf",
+        "title": "قرار وزير المالية رقم 991 لسنة 2005 بإصدار اللائحة التنفيذية لقانون الضريبة على الدخل",
+        "kind": "regulation",
+        "observed_from": "https://portal.eta.gov.eg/ar/content/qwanyn-aldrybt-ly-aldkhl",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://portal.eta.gov.eg/sites/default/files/2024-03/law_no.1-2007.pdf",
+        "title": "قانون رقم 1 لسنة 2007 بتعديل بعض أحكام قانون الضريبة على الدخل",
+        "kind": "law",
+        "observed_from": "https://portal.eta.gov.eg/ar/content/qwanyn-aldrybt-ly-aldkhl",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://portal.eta.gov.eg/sites/default/files/2024-03/law_no.96-2015.pdf",
+        "title": "قانون رقم 96 لسنة 2015 بتعديل بعض أحكام قانون الضريبة على الدخل",
+        "kind": "law",
+        "observed_from": "https://portal.eta.gov.eg/ar/content/qwanyn-aldrybt-ly-aldkhl",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://portal.eta.gov.eg/sites/default/files/2024-03/law_no.26-2020.pdf",
+        "title": "قانون رقم 26 لسنة 2020 بتعديل بعض أحكام قانون الضريبة على الدخل",
+        "kind": "law",
+        "observed_from": "https://portal.eta.gov.eg/ar/content/qwanyn-aldrybt-ly-aldkhl",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://portal.eta.gov.eg/sites/default/files/2024-03/law_no.7-2024.pdf",
+        "title": "قانون رقم 7 لسنة 2024 بتعديل بعض أحكام قانون الضريبة على الدخل",
+        "kind": "law",
+        "observed_from": "https://portal.eta.gov.eg/ar/content/qwanyn-aldrybt-ly-aldkhl",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://portal.eta.gov.eg/sites/default/files/2025-02/law_no.6.of_.2025.pdf",
+        "title": "قانون رقم 6 لسنة 2025 بشأن الحوافز والتيسيرات الضريبية للمشروعات",
+        "kind": "law",
+        "observed_from": "https://portal.eta.gov.eg/ar/content/qwanyn-aldrybt-ly-aldkhl",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://portal.eta.gov.eg/sites/default/files/2024-03/vat-law_no.67-2016.pdf",
+        "title": "قانون رقم 67 لسنة 2016 بإصدار قانون الضريبة على القيمة المضافة",
+        "kind": "law",
+        "observed_from": "https://portal.eta.gov.eg/ar/content/qwanyn-aldrybt-ly-alqymt-almdaft",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://portal.eta.gov.eg/sites/default/files/2024-03/vat-law_no.66-2017.pdf",
+        "title": "قرار وزير المالية رقم 66 لسنة 2017 بإصدار اللائحة التنفيذية لقانون الضريبة على القيمة المضافة",
+        "kind": "regulation",
+        "observed_from": "https://portal.eta.gov.eg/ar/content/qwanyn-aldrybt-ly-alqymt-almdaft",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://portal.eta.gov.eg/sites/default/files/2024-03/vat-law_no.3-2022.pdf",
+        "title": "قانون رقم 3 لسنة 2022 بتعديل بعض أحكام قانوني الضريبة على القيمة المضافة وضريبة الدمغة",
+        "kind": "law",
+        "observed_from": "https://portal.eta.gov.eg/ar/content/qwanyn-aldrybt-ly-alqymt-almdaft",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://portal.eta.gov.eg/sites/default/files/2024-03/law_no.206-2020.pdf",
+        "title": "قانون رقم 206 لسنة 2020 بإصدار قانون الإجراءات الضريبية الموحد",
+        "kind": "law",
+        "observed_from": "https://portal.eta.gov.eg/ar/content/qwanyn-aldrybt-ly-aldkhl",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://portal.eta.gov.eg/sites/default/files/2026-03/law.no_.196.of_.2008.pdf",
+        "title": "قانون رقم 196 لسنة 2008 بشأن الضريبة على العقارات المبنية",
+        "kind": "law",
+        "observed_from": "https://portal.eta.gov.eg/ar/content/qwanyn-aldrybt-ly-aldkhl",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://eta.gov.eg/sites/default/files/2026-05/law.no_.147.of_.1984.pdf",
+        "title": "قانون رقم 147 لسنة 1984 بفرض رسم تنمية الموارد المالية للدولة",
+        "kind": "law",
+        "observed_from": "https://www.eta.gov.eg/en/node/837",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://eta.gov.eg/sites/default/files/2026-05/law.no_.111.of_.1981.pdf",
+        "title": "قانون ضريبة الدمغة - نسخة منشورة بمصلحة الضرائب",
+        "kind": "law",
+        "observed_from": "https://www.eta.gov.eg/en/node/837",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      },
+      {
+        "url": "https://portal.eta.gov.eg/sites/default/files/2025-03/law.no_.152.for_.2020.pdf",
+        "title": "قانون رقم 152 لسنة 2020 بتنمية المشروعات المتوسطة والصغيرة ومتناهية الصغر",
+        "kind": "law",
+        "observed_from": "https://portal.eta.gov.eg/ar/content/qwanyn-aldrybt-ly-aldkhl",
+        "edition_note": "نسخة رسمية منشورة من مصلحة الضرائب المصرية. يجب التحقق من نص الإصدار والتعديلات وتاريخ نفاذ كل حكم. صفحات الصور والنص العربي غير الموثوق أو المعكوس والأرقام غير المحفوظة ليست أساساً صالحاً للحساب. لا تعني سنة تحميل الملف سنة نفاذ القانون."
+      }
+    ],
+    "link_rules": [],
+    "section_heading_pattern": "^[ \\t\\u00a0]*(?:المادة|مادة)[ \\t\\u00a0]*[\\(（]?[0-9٠-٩]+",
+    "max_documents": 15,
+    "max_pages": 15,
+    "max_depth": 0,
+    "max_links_per_page": 1,
+    "max_bytes": 20971520,
+    "max_pdf_pages": 2000,
+    "timeout_seconds": 45,
+    "retries": 1,
+    "max_redirects": 3,
+    "pdf_text_backend": "pdftotext"
+  }
+}

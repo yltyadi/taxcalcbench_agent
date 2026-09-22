@@ -1,0 +1,214 @@
+{
+  "country": "ID",
+  "language": "id",
+  "currency": "IDR",
+  "runtime": {
+    "model": "gemini-3.8-flash",
+    "reasoning_effort": "low",
+    "create_reasoning_effort": "high",
+    "max_output_tokens": 65536,
+    "timeout_seconds": 300,
+    "review_reasoning_effort": "high"
+  },
+  "generation": {
+    "families": 50,
+    "regular_questions_per_family": 5,
+    "missing_information_per_family": 1,
+    "min_periods_per_family": 2,
+    "categories": [
+      {
+        "code": "1000",
+        "label": "Income, profits and capital gains",
+        "weight": 1
+      },
+      {
+        "code": "2000",
+        "label": "Social security contributions",
+        "weight": 1
+      },
+      {
+        "code": "3000",
+        "label": "Payroll and workforce taxes",
+        "weight": 1
+      },
+      {
+        "code": "4000",
+        "label": "Property taxes",
+        "weight": 1
+      },
+      {
+        "code": "5000",
+        "label": "Goods and services taxes",
+        "weight": 1
+      },
+      {
+        "code": "6000",
+        "label": "Other taxes",
+        "weight": 1
+      }
+    ],
+    "periods": [
+      {
+        "label": "2020-2026",
+        "start": 2020,
+        "end": 2026,
+        "weight": 3
+      },
+      {
+        "label": "2010-2019",
+        "start": 2010,
+        "end": 2019,
+        "weight": 1
+      },
+      {
+        "label": "2000-2009",
+        "start": 2000,
+        "end": 2009,
+        "weight": 1
+      }
+    ]
+  },
+  "sources": {
+    "allowed_hosts": {
+      "jdih.kemenkeu.go.id": [
+        "/api/download/fulltext/2000/18TAHUN2000UU\\.htm",
+        "/api/download/fulltext/2000/24TAHUN2000PP\\.Htm",
+        "/api/download/fulltext/1994/12TAHUN\\~1994UU\\.HTM",
+        "/api/download/fulltext/1993/14TAHUN1993PP\\.htm",
+        "/api/download/fulltext/2000/17TAHUN2000UU\\.htm",
+        "/api/download/fulltext/2008/36TAHUN2008UU\\.htm",
+        "/api/download/fulltext/2013/46TAHUN2013PP\\.htm"
+      ],
+      "www.pajak.go.id": [
+        "/en/node/35341",
+        "/en/node/58434",
+        "/en/node/58274",
+        "/id/peraturan/penyesuaian\\-besarnya\\-penghasilan\\-tidak\\-kena\\-pajak\\-2",
+        "/en/node/74838"
+      ],
+      "stats.pajak.go.id": [
+        "/id/peraturan/penyesuaian\\-pengaturan\\-di\\-bidang\\-pajak\\-penghasilan"
+      ]
+    },
+    "seeds": [
+      {
+        "url": "https://jdih.kemenkeu.go.id/api/download/fulltext/2000/18TAHUN2000UU.htm",
+        "title": "UU 18 TAHUN 2000 - Perubahan Kedua atas Undang-Undang Nomor 8 Tahun 1983 tentang Pajak Pertambahan Nilai Barang dan Jasa dan Pajak Penjualan atas Barang Mewah.",
+        "kind": "law",
+        "observed_from": "https://jdih.kemenkeu.go.id/dok/uu-18-tahun-2000",
+        "edition_note": "Naskah resmi sebagaimana diundangkan; periksa mulai berlaku, perubahan dan ketentuan peralihan untuk tahun kasus. Jangan menerapkan perubahan baru secara surut. Dokumen perubahan harus dibaca bersama ketentuan dasar yang berlaku; tarif daerah atau parameter yang tidak tersedia tidak boleh diasumsikan."
+      },
+      {
+        "url": "https://www.pajak.go.id/en/node/35341",
+        "title": "UU 42 TAHUN 2009 - Perubahan Ketiga atas Undang-Undang Nomor 8 Tahun 1983 tentang Pajak Pertambahan Nilai Barang dan Jasa dan Pajak Penjualan atas Barang Mewah.",
+        "kind": "law",
+        "edition_note": "Naskah resmi sebagaimana diundangkan; periksa mulai berlaku, perubahan dan ketentuan peralihan untuk tahun kasus. Jangan menerapkan perubahan baru secara surut. Dokumen perubahan harus dibaca bersama ketentuan dasar yang berlaku; tarif daerah atau parameter yang tidak tersedia tidak boleh diasumsikan."
+      },
+      {
+        "url": "https://www.pajak.go.id/en/node/58434",
+        "title": "PP 23 TAHUN 2018 - Pajak Penghasilan atas Penghasilan Dari Usaha yang Diterima atau Diperoleh Wajib Pajak yang Memiliki Peredaran Bruto Tertentu",
+        "kind": "regulation",
+        "edition_note": "Naskah resmi sebagaimana diundangkan; periksa mulai berlaku, perubahan dan ketentuan peralihan untuk tahun kasus. Jangan menerapkan perubahan baru secara surut. Dokumen perubahan harus dibaca bersama ketentuan dasar yang berlaku; tarif daerah atau parameter yang tidak tersedia tidak boleh diasumsikan."
+      },
+      {
+        "url": "https://stats.pajak.go.id/id/peraturan/penyesuaian-pengaturan-di-bidang-pajak-penghasilan",
+        "title": "PP 55 TAHUN 2022 - Penyesuaian Pengaturan di Bidang Pajak Penghasilan",
+        "kind": "regulation",
+        "edition_note": "Naskah resmi sebagaimana diundangkan; periksa mulai berlaku, perubahan dan ketentuan peralihan untuk tahun kasus. Jangan menerapkan perubahan baru secara surut. Dokumen perubahan harus dibaca bersama ketentuan dasar yang berlaku; tarif daerah atau parameter yang tidak tersedia tidak boleh diasumsikan."
+      },
+      {
+        "url": "https://www.pajak.go.id/en/node/58274",
+        "title": "UU 10 TAHUN 2020 - Bea Meterai",
+        "kind": "law",
+        "edition_note": "Naskah resmi sebagaimana diundangkan; periksa mulai berlaku, perubahan dan ketentuan peralihan untuk tahun kasus. Jangan menerapkan perubahan baru secara surut. Dokumen perubahan harus dibaca bersama ketentuan dasar yang berlaku; tarif daerah atau parameter yang tidak tersedia tidak boleh diasumsikan."
+      },
+      {
+        "url": "https://jdih.kemenkeu.go.id/api/download/fulltext/2000/24TAHUN2000PP.Htm",
+        "title": "PP 24 TAHUN 2000 - Perubahan Tarif Bea Meterai dan Besarnya Batas Pengenaan Harga Nominal yang Dikenakan Bea Meterai.   Jakarta, 2000",
+        "kind": "regulation",
+        "observed_from": "https://jdih.kemenkeu.go.id/dok/pp-24-tahun-2000",
+        "edition_note": "Naskah resmi sebagaimana diundangkan; periksa mulai berlaku, perubahan dan ketentuan peralihan untuk tahun kasus. Jangan menerapkan perubahan baru secara surut. Dokumen perubahan harus dibaca bersama ketentuan dasar yang berlaku; tarif daerah atau parameter yang tidak tersedia tidak boleh diasumsikan."
+      },
+      {
+        "url": "https://jdih.kemenkeu.go.id/api/download/fulltext/1994/12TAHUN~1994UU.HTM",
+        "title": "UU 12 TAHUN 1994 - Perubahan atas Undang-Undang Nomor 12 Tahun 1985 tentang Pajak Bumi dan Bangunan.",
+        "kind": "law",
+        "observed_from": "https://jdih.kemenkeu.go.id/dok/uu-12-tahun-1994",
+        "edition_note": "Naskah resmi sebagaimana diundangkan; periksa mulai berlaku, perubahan dan ketentuan peralihan untuk tahun kasus. Jangan menerapkan perubahan baru secara surut. Dokumen perubahan harus dibaca bersama ketentuan dasar yang berlaku; tarif daerah atau parameter yang tidak tersedia tidak boleh diasumsikan."
+      },
+      {
+        "url": "https://www.pajak.go.id/id/peraturan/penyesuaian-besarnya-penghasilan-tidak-kena-pajak-2",
+        "title": "101/PMK.010/2016 - Penyesuaian Besarnya Penghasilan Tidak Kena Pajak.",
+        "kind": "regulation",
+        "edition_note": "Naskah resmi sebagaimana diundangkan; periksa mulai berlaku, perubahan dan ketentuan peralihan untuk tahun kasus. Jangan menerapkan perubahan baru secara surut. Dokumen perubahan harus dibaca bersama ketentuan dasar yang berlaku; tarif daerah atau parameter yang tidak tersedia tidak boleh diasumsikan."
+      },
+      {
+        "url": "https://jdih.kemenkeu.go.id/api/download/fulltext/1993/14TAHUN1993PP.htm",
+        "title": "PP 14 TAHUN 1993 - Penyelenggaraan Program Jaminan Sosial Tenaga Kerja.",
+        "kind": "regulation",
+        "observed_from": "https://jdih.kemenkeu.go.id/dok/pp-14-tahun-1993",
+        "edition_note": "Naskah resmi sebagaimana diundangkan; periksa mulai berlaku, perubahan dan ketentuan peralihan untuk tahun kasus. Jangan menerapkan perubahan baru secara surut. Dokumen perubahan harus dibaca bersama ketentuan dasar yang berlaku; tarif daerah atau parameter yang tidak tersedia tidak boleh diasumsikan."
+      },
+      {
+        "url": "https://jdih.kemenkeu.go.id/api/download/fulltext/2000/17TAHUN2000UU.htm",
+        "title": "UU 17 TAHUN 2000 — Perubahan Ketiga Undang-Undang Pajak Penghasilan",
+        "kind": "law",
+        "observed_from": "https://jdih.kemenkeu.go.id/dok/uu-17-tahun-2000",
+        "edition_note": "Naskah resmi sebagaimana diundangkan; periksa mulai berlaku, perubahan dan ketentuan peralihan untuk tahun kasus. Jangan menerapkan perubahan baru secara surut. Dokumen perubahan harus dibaca bersama ketentuan dasar yang berlaku; tarif daerah atau parameter yang tidak tersedia tidak boleh diasumsikan."
+      },
+      {
+        "url": "https://jdih.kemenkeu.go.id/api/download/fulltext/2008/36TAHUN2008UU.htm",
+        "title": "UU 36 TAHUN 2008 — Perubahan Keempat Undang-Undang Pajak Penghasilan",
+        "kind": "law",
+        "observed_from": "https://jdih.kemenkeu.go.id/dok/uu-36-tahun-2008",
+        "edition_note": "Naskah resmi sebagaimana diundangkan; periksa mulai berlaku, perubahan dan ketentuan peralihan untuk tahun kasus. Jangan menerapkan perubahan baru secara surut. Dokumen perubahan harus dibaca bersama ketentuan dasar yang berlaku; tarif daerah atau parameter yang tidak tersedia tidak boleh diasumsikan."
+      },
+      {
+        "url": "https://www.pajak.go.id/en/node/74838",
+        "title": "UU 7 TAHUN 2021 — Harmonisasi Peraturan Perpajakan",
+        "kind": "law",
+        "edition_note": "Naskah resmi sebagaimana diundangkan; periksa mulai berlaku, perubahan dan ketentuan peralihan untuk tahun kasus. Jangan menerapkan perubahan baru secara surut. Dokumen perubahan harus dibaca bersama ketentuan dasar yang berlaku; tarif daerah atau parameter yang tidak tersedia tidak boleh diasumsikan."
+      },
+      {
+        "url": "https://jdih.kemenkeu.go.id/api/download/fulltext/2013/46TAHUN2013PP.htm",
+        "title": "PP 46 TAHUN 2013 — Pajak Penghasilan atas Penghasilan Dari Usaha dengan Peredaran Bruto Tertentu",
+        "kind": "regulation",
+        "observed_from": "https://jdih.kemenkeu.go.id/dok/pp-46-tahun-2013",
+        "edition_note": "Naskah resmi sebagaimana diundangkan; periksa mulai berlaku, perubahan dan ketentuan peralihan untuk tahun kasus. Jangan menerapkan perubahan baru secara surut. Dokumen perubahan harus dibaca bersama ketentuan dasar yang berlaku; tarif daerah atau parameter yang tidak tersedia tidak boleh diasumsikan."
+      }
+    ],
+    "link_rules": [],
+    "section_heading_pattern": "(?im)^[ \\t]*(?:Pasal\\s+[0-9]+[A-Z]?|BAB\\s+[IVXLCDM]+)\\b",
+    "max_documents": 30,
+    "max_pages": 30,
+    "max_depth": 0,
+    "max_links_per_page": 100,
+    "max_bytes": 20971520,
+    "max_pdf_pages": 500,
+    "timeout_seconds": 60,
+    "retries": 1,
+    "max_redirects": 3,
+    "html_remove_selectors": {
+      "jdih.kemenkeu.go.id": [
+        "img[src=\"46TAHUN2013PP_files/image001.gif\"]",
+        "img[src=\"17TAHUN2000UU_files/image001.gif\"]",
+        "img[src=\"18TAHUN2000UU_files/image001.gif\"]",
+        "img[src=\"12TAHUN~1994UU_files/image001.gif\"]",
+        "img[src=\"36TAHUN2008UU_files/image001.gif\"]",
+        "img[src=\"14TAHUN1993PP_files/image001.gif\"]"
+      ],
+      "www.pajak.go.id": [
+        "img[src=\"/themes/custom/email/2_%20logo%20PP.jpg\"]",
+        "img[src=\"/themes/custom/email/National_emblem_of_Indonesia_Garuda_Pancasila123.png\"]"
+      ],
+      "stats.pajak.go.id": [
+        "img[src=\"/themes/custom/email/2_%20logo%20PP.jpg\"]",
+        "img[src=\"/themes/custom/email/National_emblem_of_Indonesia_Garuda_Pancasila123.png\"]"
+      ]
+    },
+    "html_selectors": {
+      "www.pajak.go.id": ".field--name-field-body-dalam-html, .field--name-field-isi",
+      "stats.pajak.go.id": ".field--name-field-body-dalam-html, .field--name-field-isi"
+    }
+  }
+}

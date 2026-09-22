@@ -1,0 +1,207 @@
+{
+  "country": "CN",
+  "language": "zh",
+  "currency": "CNY",
+  "runtime": {
+    "model": "gemini-3.8-flash",
+    "reasoning_effort": "low",
+    "create_reasoning_effort": "high",
+    "max_output_tokens": 65536,
+    "timeout_seconds": 300,
+    "review_reasoning_effort": "high"
+  },
+  "generation": {
+    "families": 50,
+    "regular_questions_per_family": 5,
+    "missing_information_per_family": 1,
+    "min_periods_per_family": 2,
+    "categories": [
+      {
+        "code": "1000",
+        "label": "Income, profits and capital gains",
+        "weight": 1
+      },
+      {
+        "code": "2000",
+        "label": "Social security contributions",
+        "weight": 1
+      },
+      {
+        "code": "3000",
+        "label": "Payroll and workforce taxes",
+        "weight": 1
+      },
+      {
+        "code": "4000",
+        "label": "Property taxes",
+        "weight": 1
+      },
+      {
+        "code": "5000",
+        "label": "Goods and services taxes",
+        "weight": 1
+      },
+      {
+        "code": "6000",
+        "label": "Other taxes",
+        "weight": 1
+      }
+    ],
+    "periods": [
+      {
+        "label": "2020-2026",
+        "start": 2020,
+        "end": 2026,
+        "weight": 3
+      },
+      {
+        "label": "2010-2019",
+        "start": 2010,
+        "end": 2019,
+        "weight": 1
+      },
+      {
+        "label": "2000-2009",
+        "start": 2000,
+        "end": 2009,
+        "weight": 1
+      }
+    ]
+  },
+  "sources": {
+    "allowed_hosts": {
+      "www.mof.gov.cn": [
+        "/zhengwuxinxi/zhengcefabu/2007zcfb/200805/t20080519_26016\\.htm",
+        "/zhengwuxinxi/zhengcefabu/2007zcfb/200805/t20080519_27853\\.htm",
+        "/zhengwuxinxi/zhengcefabu/201107/t20110701_569188\\.htm"
+      ],
+      "www.ssf.gov.cn": [
+        "/portal/rootfile/P020180917424641370482\\.pdf",
+        "/portal/rootfiles/2025/01/17/1738811814919836\\-1738811814942199\\.pdf",
+        "/portal/rootfiles/2022/07/29/1660719214618663\\-1660719214632636\\.pdf"
+      ],
+      "www.gov.cn": [
+        "/zhengce/content/2018\\-12/22/content_5351177\\.htm",
+        "/zhengce/content/2018\\-12/22/content_5351181\\.htm",
+        "/zhengce/content/202308/content_6901206\\.htm",
+        "/gongbao/content/2012/content_2121706\\.htm",
+        "/gongbao/content/2011/content_1860821\\.htm",
+        "/gongbao/content/2011/content_1860812\\.htm",
+        "/guoqing/2021\\-10/29/content_5647616\\.htm",
+        "/zhengce/content/2019\\-04/04/content_5379629\\.htm"
+      ],
+      "jgxt.mof.gov.cn": [
+        "/webfile/flfg/2019\\-08\\-05/76\\.html"
+      ]
+    },
+    "seeds": [
+      {
+        "url": "https://www.mof.gov.cn/zhengwuxinxi/zhengcefabu/2007zcfb/200805/t20080519_26016.htm",
+        "title": "中华人民共和国企业所得税法（2007年通过）",
+        "kind": "law",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      },
+      {
+        "url": "https://www.mof.gov.cn/zhengwuxinxi/zhengcefabu/2007zcfb/200805/t20080519_27853.htm",
+        "title": "中华人民共和国企业所得税法实施条例（2007年公布）",
+        "kind": "regulation",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      },
+      {
+        "url": "https://www.mof.gov.cn/zhengwuxinxi/zhengcefabu/201107/t20110701_569188.htm",
+        "title": "中华人民共和国个人所得税法（2011年修正）",
+        "kind": "law",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      },
+      {
+        "url": "https://www.ssf.gov.cn/portal/rootfile/P020180917424641370482.pdf",
+        "title": "中华人民共和国个人所得税法（2018年修正）",
+        "kind": "law",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      },
+      {
+        "url": "https://www.gov.cn/zhengce/content/2018-12/22/content_5351177.htm",
+        "title": "中华人民共和国个人所得税法实施条例（国务院令第707号）",
+        "kind": "regulation",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      },
+      {
+        "url": "https://www.gov.cn/zhengce/content/2018-12/22/content_5351181.htm",
+        "title": "个人所得税专项附加扣除暂行办法（国发〔2018〕41号）",
+        "kind": "regulation",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      },
+      {
+        "url": "https://www.gov.cn/zhengce/content/202308/content_6901206.htm",
+        "title": "国务院关于提高个人所得税有关专项附加扣除标准的通知（国发〔2023〕13号）",
+        "kind": "regulation",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      },
+      {
+        "url": "https://jgxt.mof.gov.cn/webfile/flfg/2019-08-05/76.html",
+        "title": "中华人民共和国增值税暂行条例（国务院令第538号，2008年修订）",
+        "kind": "regulation",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。",
+        "observed_from": "https://jgxt.mof.gov.cn/webfile/category/125.html"
+      },
+      {
+        "url": "https://www.gov.cn/gongbao/content/2012/content_2121706.htm",
+        "title": "增值税暂行条例和营业税暂行条例实施细则（2011年修订，财政部令第65号）",
+        "kind": "regulation",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      },
+      {
+        "url": "https://www.ssf.gov.cn/portal/rootfiles/2025/01/17/1738811814919836-1738811814942199.pdf",
+        "title": "中华人民共和国增值税法（2024年通过，自2026年1月1日起施行）",
+        "kind": "law",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      },
+      {
+        "url": "https://www.gov.cn/gongbao/content/2011/content_1860821.htm",
+        "title": "中华人民共和国印花税暂行条例（2011年修订）",
+        "kind": "regulation",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      },
+      {
+        "url": "https://www.ssf.gov.cn/portal/rootfiles/2022/07/29/1660719214618663-1660719214632636.pdf",
+        "title": "中华人民共和国印花税法（2021年通过，自2022年7月1日起施行）",
+        "kind": "law",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      },
+      {
+        "url": "https://www.gov.cn/gongbao/content/2011/content_1860812.htm",
+        "title": "中华人民共和国房产税暂行条例（2011年修订）",
+        "kind": "regulation",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      },
+      {
+        "url": "https://www.gov.cn/guoqing/2021-10/29/content_5647616.htm",
+        "title": "中华人民共和国社会保险法（2018年修正）",
+        "kind": "law",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      },
+      {
+        "url": "https://www.gov.cn/zhengce/content/2019-04/04/content_5379629.htm",
+        "title": "国务院办公厅关于印发降低社会保险费率综合方案的通知（国办发〔2019〕13号）",
+        "kind": "regulation",
+        "edition_note": "中央国家机关公开的全国性法律或法规文本。公布、网页及修订日期不等同于条款生效日期；逐条核对施行、修订、废止和过渡规定。不得将后期修订追溯适用于早期问题；需要地方税率或未收录配套规定的情形应改选可据现有国家法律计算的情形。"
+      }
+    ],
+    "link_rules": [],
+    "html_selectors": {
+      "www.gov.cn": "#UCAP-CONTENT",
+      "www.mof.gov.cn": ".my_doccontent",
+      "jgxt.mof.gov.cn": "#content"
+    },
+    "section_heading_pattern": "^[ \\t\\u3000]*第[一二三四五六七八九十百千零〇0-9]+条",
+    "max_documents": 30,
+    "max_pages": 30,
+    "max_depth": 0,
+    "max_links_per_page": 100,
+    "max_bytes": 20971520,
+    "max_pdf_pages": 500,
+    "timeout_seconds": 30,
+    "retries": 1,
+    "max_redirects": 3
+  }
+}

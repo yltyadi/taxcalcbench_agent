@@ -1,0 +1,158 @@
+{
+  "runtime": {
+    "model": "gemini-3.8-flash",
+    "reasoning_effort": "low",
+    "create_reasoning_effort": "high",
+    "max_output_tokens": 65536,
+    "timeout_seconds": 300,
+    "review_reasoning_effort": "high"
+  },
+  "generation": {
+    "families": 50,
+    "regular_questions_per_family": 5,
+    "missing_information_per_family": 1,
+    "min_periods_per_family": 2,
+    "categories": [
+      {
+        "code": "1000",
+        "label": "Income, profits and capital gains",
+        "weight": 1
+      },
+      {
+        "code": "2000",
+        "label": "Social security contributions",
+        "weight": 1
+      },
+      {
+        "code": "3000",
+        "label": "Payroll and workforce taxes",
+        "weight": 1
+      },
+      {
+        "code": "4000",
+        "label": "Property taxes",
+        "weight": 1
+      },
+      {
+        "code": "5000",
+        "label": "Goods and services taxes",
+        "weight": 1
+      },
+      {
+        "code": "6000",
+        "label": "Other taxes",
+        "weight": 1
+      }
+    ],
+    "periods": [
+      {
+        "label": "2020-2026",
+        "start": 2020,
+        "end": 2026,
+        "weight": 3
+      },
+      {
+        "label": "2010-2019",
+        "start": 2010,
+        "end": 2019,
+        "weight": 1
+      },
+      {
+        "label": "2000-2009",
+        "start": 2000,
+        "end": 2009,
+        "weight": 1
+      }
+    ]
+  },
+  "country": "PK",
+  "language": "en",
+  "currency": "PKR",
+  "sources": {
+    "allowed_hosts": {
+      "download1.fbr.gov.pk": [
+        "/Docs/201012279125232750ITaxOrdinance2001ut28\\-10\\-2009\\.pdf",
+        "/Docs/2016122110124815729IncomeTaxOrdinance2001TableofContents\\.pdf",
+        "/Docs/2025881983148210Income\\-Tax\\-Ordinance,\\-2001\\-Amended\\-upto\\-31\\.07\\.2025\\.pdf",
+        "/Docs/2010121312124636625Sales%20Tax%20Act,%201990%20amendedJuly2009\\.pdf",
+        "/Docs/201511212112651615ReupdatedSalesTaxActupdatedupto30062015amendedversion\\.pdf",
+        "/Docs/202586148252375SalesTaxActupdatedupto2025\\-26\\.pdf",
+        "/Docs/2010122811125533171FED\\-ACT\\-2009\\.PDF",
+        "/Docs/2017831184927172FEDERALEXCISEACT,2005Amededupto01\\.07\\.2017\\.pdf",
+        "/Docs/2022711571639532FinanceAct2022\\.pdf"
+      ]
+    },
+    "seeds": [
+      {
+        "url": "https://download1.fbr.gov.pk/Docs/201012279125232750ITaxOrdinance2001ut28-10-2009.pdf",
+        "title": "Income Tax Ordinance 2001, amended to 28 October 2009",
+        "kind": "law",
+        "edition_note": "Official federal text in English. A consolidation/publication date is not the effective date of every provision. Establish the applicable tax year, Finance Act changes, commencement and schedule from the text; do not infer provincial law or missing rates."
+      },
+      {
+        "url": "https://download1.fbr.gov.pk/Docs/2016122110124815729IncomeTaxOrdinance2001TableofContents.pdf",
+        "title": "Income Tax Ordinance 2001, updated to 15 December 2016",
+        "kind": "law",
+        "edition_note": "Official federal text in English. A consolidation/publication date is not the effective date of every provision. Establish the applicable tax year, Finance Act changes, commencement and schedule from the text; do not infer provincial law or missing rates."
+      },
+      {
+        "url": "https://download1.fbr.gov.pk/Docs/2025881983148210Income-Tax-Ordinance,-2001-Amended-upto-31.07.2025.pdf",
+        "title": "Income Tax Ordinance 2001, amended to 31 July 2025",
+        "kind": "law",
+        "observed_from": "https://www.fbr.gov.pk/Categ/Income-Tax-Ordinance/326",
+        "edition_note": "Official federal text in English. A consolidation/publication date is not the effective date of every provision. Establish the applicable tax year, Finance Act changes, commencement and schedule from the text; do not infer provincial law or missing rates."
+      },
+      {
+        "url": "https://download1.fbr.gov.pk/Docs/2010121312124636625Sales%20Tax%20Act,%201990%20amendedJuly2009.pdf",
+        "title": "Sales Tax Act 1990, amended to 1 July 2009",
+        "kind": "law",
+        "observed_from": "https://fbr.gov.pk/Categ/Sales-Tax-Act-1990/301/1000",
+        "edition_note": "Official federal text in English. A consolidation/publication date is not the effective date of every provision. Establish the applicable tax year, Finance Act changes, commencement and schedule from the text; do not infer provincial law or missing rates."
+      },
+      {
+        "url": "https://download1.fbr.gov.pk/Docs/201511212112651615ReupdatedSalesTaxActupdatedupto30062015amendedversion.pdf",
+        "title": "Sales Tax Act 1990, amended to 1 July 2015",
+        "kind": "law",
+        "observed_from": "https://fbr.gov.pk/Categ/Sales-Tax-Act-1990/301/1000",
+        "edition_note": "Official federal text in English. A consolidation/publication date is not the effective date of every provision. Establish the applicable tax year, Finance Act changes, commencement and schedule from the text; do not infer provincial law or missing rates."
+      },
+      {
+        "url": "https://download1.fbr.gov.pk/Docs/202586148252375SalesTaxActupdatedupto2025-26.pdf",
+        "title": "Sales Tax Act 1990, amended to 30 June 2025",
+        "kind": "law",
+        "observed_from": "https://fbr.gov.pk/Categ/Sales-Tax-Act-1990/301/1000",
+        "edition_note": "Official federal text in English. A consolidation/publication date is not the effective date of every provision. Establish the applicable tax year, Finance Act changes, commencement and schedule from the text; do not infer provincial law or missing rates."
+      },
+      {
+        "url": "https://download1.fbr.gov.pk/Docs/2010122811125533171FED-ACT-2009.PDF",
+        "title": "Federal Excise Act 2005, amended to 28 October 2009",
+        "kind": "law",
+        "edition_note": "Official federal text in English. A consolidation/publication date is not the effective date of every provision. Establish the applicable tax year, Finance Act changes, commencement and schedule from the text; do not infer provincial law or missing rates."
+      },
+      {
+        "url": "https://download1.fbr.gov.pk/Docs/2017831184927172FEDERALEXCISEACT,2005Amededupto01.07.2017.pdf",
+        "title": "Federal Excise Act 2005, amended to 1 July 2017",
+        "kind": "law",
+        "observed_from": "https://www.fbr.gov.pk/Downloads/?id=25002&Type=Docs",
+        "edition_note": "Official federal text in English. A consolidation/publication date is not the effective date of every provision. Establish the applicable tax year, Finance Act changes, commencement and schedule from the text; do not infer provincial law or missing rates."
+      },
+      {
+        "url": "https://download1.fbr.gov.pk/Docs/2022711571639532FinanceAct2022.pdf",
+        "title": "Finance Act 2022, enacted text including tax amendments and customs schedule",
+        "kind": "law",
+        "observed_from": "https://www.fbr.gov.pk/Categ/Finance-Acts/620",
+        "edition_note": "Official federal text in English. A consolidation/publication date is not the effective date of every provision. Establish the applicable tax year, Finance Act changes, commencement and schedule from the text; do not infer provincial law or missing rates."
+      }
+    ],
+    "link_rules": [],
+    "max_documents": 9,
+    "max_pages": 9,
+    "max_depth": 0,
+    "max_links_per_page": 100,
+    "max_bytes": 20971520,
+    "max_pdf_pages": 2000,
+    "timeout_seconds": 40,
+    "retries": 1,
+    "max_redirects": 3
+  }
+}

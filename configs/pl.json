@@ -1,0 +1,218 @@
+{
+  "runtime": {
+    "model": "gemini-3.8-flash",
+    "reasoning_effort": "low",
+    "create_reasoning_effort": "high",
+    "max_output_tokens": 65536,
+    "timeout_seconds": 300,
+    "review_reasoning_effort": "high"
+  },
+  "generation": {
+    "families": 50,
+    "regular_questions_per_family": 5,
+    "missing_information_per_family": 1,
+    "min_periods_per_family": 2,
+    "categories": [
+      {
+        "code": "1000",
+        "label": "Income, profits and capital gains",
+        "weight": 1
+      },
+      {
+        "code": "2000",
+        "label": "Social security contributions",
+        "weight": 1
+      },
+      {
+        "code": "3000",
+        "label": "Payroll and workforce taxes",
+        "weight": 1
+      },
+      {
+        "code": "4000",
+        "label": "Property taxes",
+        "weight": 1
+      },
+      {
+        "code": "5000",
+        "label": "Goods and services taxes",
+        "weight": 1
+      },
+      {
+        "code": "6000",
+        "label": "Other taxes",
+        "weight": 1
+      }
+    ],
+    "periods": [
+      {
+        "label": "2020-2026",
+        "start": 2020,
+        "end": 2026,
+        "weight": 3
+      },
+      {
+        "label": "2010-2019",
+        "start": 2010,
+        "end": 2019,
+        "weight": 1
+      },
+      {
+        "label": "2000-2009",
+        "start": 2000,
+        "end": 2009,
+        "weight": 1
+      }
+    ]
+  },
+  "country": "PL",
+  "language": "pl",
+  "currency": "PLN",
+  "sources": {
+    "allowed_hosts": {
+      "eli.gov.pl": [
+        "/api/acts/DU/2000/176/text\\.html",
+        "/api/acts/DU/2010/307/text\\.html",
+        "/api/acts/DU/2024/226/text\\.html",
+        "/api/acts/DU/2004/535/text\\.html",
+        "/api/acts/DU/2011/1054/text\\.html",
+        "/api/acts/DU/2024/361/text\\.html",
+        "/api/acts/DU/2009/1585/text\\.html",
+        "/api/acts/DU/2015/121/text\\.html",
+        "/api/acts/DU/2024/497/text\\.html",
+        "/api/acts/DU/2005/399/text\\.html",
+        "/api/acts/DU/2015/626/text\\.html",
+        "/api/acts/DU/2024/295/text\\.html",
+        "/api/acts/DU/2009/768/text\\.html",
+        "/api/acts/DU/2024/1837/text\\.html",
+        "/api/acts/DU/2023/1226/text\\.html",
+        "/api/acts/DU/2023/1893/text\\.html"
+      ]
+    },
+    "seeds": [
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2000/176/text.html",
+        "title": "Podatek dochodowy od osób fizycznych — tekst jednolity z 2000 r. (Dz.U. 2000 poz. 176)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2000/176/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2010/307/text.html",
+        "title": "Podatek dochodowy od osób fizycznych — tekst jednolity z 2010 r. (Dz.U. 2010 poz. 307)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2010/307/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2024/226/text.html",
+        "title": "Podatek dochodowy od osób fizycznych — tekst jednolity z 2024 r. (Dz.U. 2024 poz. 226)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2024/226/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2004/535/text.html",
+        "title": "Ustawa z dnia 11 marca 2004 r. o podatku od towarów i usług — tekst ogłoszony (Dz.U. 2004 poz. 535)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2004/535/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2011/1054/text.html",
+        "title": "Podatek od towarów i usług — tekst jednolity z 2011 r. (Dz.U. 2011 poz. 1054)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2011/1054/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2024/361/text.html",
+        "title": "Podatek od towarów i usług — tekst jednolity z 2024 r. (Dz.U. 2024 poz. 361)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2024/361/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2009/1585/text.html",
+        "title": "System ubezpieczeń społecznych — tekst jednolity z 2009 r. (Dz.U. 2009 poz. 1585)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2009/1585/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2015/121/text.html",
+        "title": "System ubezpieczeń społecznych — tekst jednolity z 2015 r. (Dz.U. 2015 poz. 121)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2015/121/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2024/497/text.html",
+        "title": "System ubezpieczeń społecznych — tekst jednolity z 2024 r. (Dz.U. 2024 poz. 497)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2024/497/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2005/399/text.html",
+        "title": "Podatek od czynności cywilnoprawnych — tekst jednolity z 2005 r. (Dz.U. 2005 poz. 399)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2005/399/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2015/626/text.html",
+        "title": "Podatek od czynności cywilnoprawnych — tekst jednolity z 2015 r. (Dz.U. 2015 poz. 626)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2015/626/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2024/295/text.html",
+        "title": "Podatek od czynności cywilnoprawnych — tekst jednolity z 2024 r. (Dz.U. 2024 poz. 295)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2024/295/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2009/768/text.html",
+        "title": "Podatek od spadków i darowizn — tekst jednolity z 2009 r. (Dz.U. 2009 poz. 768)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2009/768/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2024/1837/text.html",
+        "title": "Podatek od spadków i darowizn — tekst jednolity z 2024 r. (Dz.U. 2024 poz. 1837)",
+        "kind": "law",
+        "observed_from": "https://eli.gov.pl/eli/DU/2024/1837/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2023/1226/text.html",
+        "title": "Rozporządzenie Ministra Finansów z dnia 28 czerwca 2023 r. — kwoty i skale podatku od spadków i darowizn (Dz.U. 2023 poz. 1226)",
+        "kind": "regulation",
+        "observed_from": "https://eli.gov.pl/eli/DU/2023/1226/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      },
+      {
+        "url": "https://eli.gov.pl/api/acts/DU/2023/1893/text.html",
+        "title": "Rozporządzenie Rady Ministrów z dnia 14 września 2023 r. — minimalne wynagrodzenie za pracę w 2024 r. (Dz.U. 2023 poz. 1893)",
+        "kind": "regulation",
+        "observed_from": "https://eli.gov.pl/eli/DU/2023/1893/ogl",
+        "edition_note": "Oficjalny tekst ogłoszony lub załączony tekst jednolity. Nie jest automatycznie prawem obowiązującym we wszystkich latach. Sprawdzić przepisy wejścia w życie, przypisy o zmianach i parametry właściwe dla daty zdarzenia. Brakujące przepisy i oznaczone luki ekstrakcji nie stanowią podstawy obliczeń."
+      }
+    ],
+    "link_rules": [],
+    "section_heading_pattern": "^[ \\t\\u00a0]*(?:Art\\.|§)[ \\t\\u00a0]*[0-9]+[a-z]*(?:\\.|\\b)",
+    "max_documents": 16,
+    "max_pages": 16,
+    "max_depth": 0,
+    "max_links_per_page": 1,
+    "max_bytes": 20971520,
+    "max_pdf_pages": 2000,
+    "timeout_seconds": 45,
+    "retries": 1,
+    "max_redirects": 3
+  }
+}
