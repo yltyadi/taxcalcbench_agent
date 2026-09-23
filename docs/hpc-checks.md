@@ -48,6 +48,6 @@ Artifacts are under `outputs/hpc-smoke/<code>/`; source collections are under `d
 - The real SDK/tool probe passed using `gemini-3.8-flash` through OpenAI Agents SDK.
 - Live country runs encountered connection/time-out failures and continued through native SDK retries without manual restart.
 - Completed Pakistan, China, Indonesia and Poland runs resumed together with both Gemini key environment variables empty, making no new model calls. Including Egypt and India reported `blocked`, retained the other completions and returned the expected partial-batch exit code 2.
-- The Slurm wrapper was tested with quoted paths and an explicit Python executable; an actual subprocess SIGTERM test verified graceful unwind. No GPU, database or additional scheduler framework is required.
+- Standard interactive allocation (`salloc -N1 --mem=24G` inside tmux with the Conda environment) and subprocess SIGTERM tests verified graceful unwind and direct Python command execution. No wrapper scripts, GPU, database or additional scheduler framework are required.
 
-The [README](../README.md) contains installation, one-country and multi-country commands, Slurm submission and transfer/resume instructions. Full 50-family generation for the new countries has not been started.
+The [README](../README.md) contains installation, one-country and multi-country commands, interactive HPC allocation and transfer/resume instructions. Full 50-family generation for the new countries has not been started.

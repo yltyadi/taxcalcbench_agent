@@ -31,7 +31,7 @@ Egypt generation is explicitly blocked by configuration at the user's request: t
 
 - [x] Portable resume using original source identities/checksums instead of machine paths.
 - [x] Single-country commands and a sequential multi-country wrapper, with independent output folders.
-- [x] Slurm script and MBZUAI conda/Python 3.12 instructions.
+- [x] MBZUAI Conda/Python 3.12 setup and direct execution in tmux/salloc.
 - [x] Retry transient API failures with visible backoff; preserve progress after persistent outages.
 - [ ] Extend official source packs where generation reports genuine legal dependencies.
 - [ ] Scale each country after its small live check, then perform publication-stage human validation.

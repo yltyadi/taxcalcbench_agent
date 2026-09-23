@@ -6,15 +6,18 @@ The workflow is **download sources → plan one family → write questions → o
 
 ## Install
 
-Use Python 3.11–3.13:
+On a local machine, use Python 3.11–3.13. On MBZUAI HPC, use the [Conda setup below](#mbzuai-hpc--ubuntu) instead.
 
 ```sh
 python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements.lock
-.venv/bin/python -m pip install --no-deps -e .
+source .venv/bin/activate
+python -m pip install -r requirements.lock
+python -m pip install --no-deps -e .
 ```
 
 Put `GOOGLE_API_KEY=your_key` in the ignored `.env` file. `GEMINI_API_KEY` also works. No OpenAI key is needed. The configured model is `gemini-3.8-flash`.
+
+All commands below use `python` from your activated environment, whether it is local `.venv` or HPC Conda.
 
 ## Settings
 
@@ -37,7 +40,7 @@ The defaults produce **250 regular + 50 missing-information questions**. Regular
 Preview settings without downloads or model calls:
 
 ```sh
-.venv/bin/taxcalcbench settings --country configs/kz.json
+python -m taxcalcbench settings --country configs/kz.json
 ```
 
 ## Run
@@ -45,7 +48,7 @@ Preview settings without downloads or model calls:
 One family, including its optional extra:
 
 ```sh
-.venv/bin/taxcalcbench run \
+python -m taxcalcbench run \
   --country configs/kz.json \
   --single-family \
   --source-dir data/kz/temporal-sources \
@@ -55,7 +58,7 @@ One family, including its optional extra:
 Full configured dataset, or resume the existing full run:
 
 ```sh
-.venv/bin/taxcalcbench run \
+python -m taxcalcbench run \
   --country configs/kz.json \
   --source-dir data/kz/temporal-sources \
   --output outputs/kz-full
@@ -90,41 +93,37 @@ India's English configuration and nine readable official documents are included,
 
 ## MBZUAI HPC / Ubuntu
 
-The supplied lab guide uses **Slurm** (`salloc`/`sbatch`). Allocate a workstation before running the program; do not run generation on the login node. This is an API workload: no GPU is required, but the allocated workstation must reach Gemini over HTTPS. Source preparation also needs access to the configured official websites.
-
-Use persistent shared storage for this checkout, `data/` and `outputs/`. Initialize the lab's conda installation, then create a Linux environment (Ubuntu's system Python 3.10 is too old):
+Use the Conda → tmux → salloc workflow confirmed on the lab workstation. Install once from your project directory:
 
 ```sh
+cd ~/projects/taxcalcbench_agent
 source /apps/local/anaconda3/conda_init.sh
-conda create -n taxcalcbench -c conda-forge python=3.12 poppler -y
+conda create -n taxcalcbench python=3.12
 conda activate taxcalcbench
 python -m pip install -r requirements.lock
 python -m pip install --no-deps -e .
 ```
 
-Use the alternative conda initialization path from your lab guide if needed. Poppler supplies `pdftotext`, required by the India and Egypt PDF configurations; it needs no sudo when installed through conda. Set the Gemini key in the ignored `.env` file or the environment, never in the job script. Do not copy the macOS `.venv` to Linux.
-
-Interactive allocation:
+Keep your API key in the project's `.env`. Conda replaces `.venv` on HPC; no sudo or copied macOS environment is needed. For each session, allocate a workstation and reactivate Conda:
 
 ```sh
 tmux new -s taxcalcbench
-salloc --nodes=1 --ntasks=1 --cpus-per-task=2 --mem=8G
-srun --pty bash
-# On the allocated workstation: activate your environment and enter the project.
-python -m taxcalcbench doctor --country configs/pk.json --live
-python -m taxcalcbench run --country configs/pk.json --output outputs/full/pk
-# Or use the multi-country command above.
+salloc -N1 --mem=24G
+source /apps/local/anaconda3/conda_init.sh
+conda activate taxcalcbench
+cd ~/projects/taxcalcbench_agent
 ```
 
-Alternatively, from the project directory with the environment activated:
+Then use the same Python commands as on any machine:
 
 ```sh
-sbatch scripts/hpc.slurm configs/pk.json configs/cn.json configs/id.json configs/pl.json
+python -m taxcalcbench doctor --country configs/pk.json --live
+python -m taxcalcbench run --country configs/pk.json --output outputs/full/pk
 ```
 
-[scripts/hpc.slurm](scripts/hpc.slurm) requests two CPU cores, 8 GB RAM and twelve hours; adjust the time, partition/account and resource request to the lab's allocation policy. It runs the countries sequentially and writes `taxcalcbench-<jobid>.log`. Set `TAXCALCBENCH_OUTPUT_ROOT=outputs/smoke` and append `--single-family` for a small job. `TAXCALCBENCH_DATA_ROOT` and `TAXCALCBENCH_PYTHON` can override the storage root and Python executable. Check a model connection from the allocated workstation, since a successful login-node connection does not establish compute-node access.
+For several countries, use the [multi-country command above](#several-countries) in this same session. No separate job script is needed. Run generation on the allocated workstation, not the login node; no GPU is required.
 
-Slurm termination preserves previously completed checkpoints. Resubmit the same command after a wall-time limit or temporary Gemini outage. Do not run two jobs against the same output directory. No retry can fix a permanently blocked network route or invalid credentials.
+Detach with **Ctrl+B, then D**; reconnect with `tmux attach -t taxcalcbench`. tmux keeps the session alive across SSH disconnects. If the allocation ends, allocate again and rerun the same command to resume saved work. Keep `data/` and `outputs/` in persistent storage, and run only one process per output directory.
 
 Interrupted source preparation also resumes: retained original/text checksums are verified first, and only unfinished URLs are fetched. Source files publish atomically so an interrupted write is not mistaken for a complete document. For connection failures, `work/operations/*/provider_errors/` records redacted transport details (for example DNS or TLS errors); check these before repeatedly resubmitting a job that has no outbound network access.
 
@@ -141,7 +140,7 @@ Paths can change between machines: resume now compares source identities and che
 `run` prepares sources before generation. Download them separately if desired:
 
 ```sh
-.venv/bin/taxcalcbench download \
+python -m taxcalcbench download \
   --country configs/kz.json \
   --source-dir data/kz/temporal-sources
 ```
@@ -174,9 +173,9 @@ Check `work/result.json` for completion, coverage and pending families. `work/fa
 ## Check the installation
 
 ```sh
-.venv/bin/taxcalcbench doctor --country configs/kz.json --source-dir data/kz/temporal-sources
-PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -p no:cacheprovider
-.venv/bin/ruff check --no-cache .
+python -m taxcalcbench doctor --country configs/kz.json --source-dir data/kz/temporal-sources
+PYTHONDONTWRITEBYTECODE=1 python -m pytest -q -p no:cacheprovider
+python -m ruff check --no-cache .
 ```
 
 `doctor --live` additionally makes a small paid SDK/tool check. Offline tests use synthetic fixtures, not invented tax-law evidence.

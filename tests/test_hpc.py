@@ -1,4 +1,4 @@
-"""Local checks for Slurm invocation and interruption; no provider requests."""
+"""Local checks for POSIX process interruption and graceful checkpoint preservation."""
 
 import json
 import os
@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-pytestmark = pytest.mark.skipif(os.name != "posix", reason="Slurm uses POSIX signals and Bash")
+pytestmark = pytest.mark.skipif(os.name != "posix", reason="POSIX signals required")
 
 
 def test_sigterm_preserves_checkpoint_and_unwinds_async_execution(tmp_path):
@@ -50,65 +50,3 @@ def test_sigterm_preserves_checkpoint_and_unwinds_async_execution(tmp_path):
     assert json.loads(checkpoint.read_text()) == {"family_id": "A-F01", "status": "approved"}
     assert cleanup.read_text() == "closed"
 
-
-@pytest.fixture
-def fake_slurm(tmp_path):
-    bin_dir = tmp_path / "fake bin"
-    bin_dir.mkdir()
-    fake_srun = bin_dir / "srun"
-    fake_srun.write_text(
-        '#!/usr/bin/env bash\n'
-        'printf "%s\\0" "$@" > "$CAPTURE_ARGS"\n'
-        'pwd > "$CAPTURE_CWD"\n'
-    )
-    fake_srun.chmod(0o755)
-    submitted_from = tmp_path / "project with spaces"
-    submitted_from.mkdir()
-    capture_args = tmp_path / "arguments"
-    capture_cwd = tmp_path / "cwd"
-    environment = {
-        **os.environ,
-        "PATH": str(bin_dir) + os.pathsep + os.environ.get("PATH", ""),
-        "SLURM_SUBMIT_DIR": str(submitted_from),
-        "CAPTURE_ARGS": str(capture_args),
-        "CAPTURE_CWD": str(capture_cwd),
-    }
-    return environment, capture_args, capture_cwd, submitted_from
-
-
-def test_slurm_forwards_countries_and_quotes_storage_and_python_paths(tmp_path, fake_slurm):
-    environment, capture_args, capture_cwd, submitted_from = fake_slurm
-    python = str(tmp_path / "conda environment" / "bin" / "python")
-    sources = str(tmp_path / "shared source files")
-    outputs = str(tmp_path / "shared output files")
-    environment.update(
-        TAXCALCBENCH_PYTHON=python,
-        TAXCALCBENCH_DATA_ROOT=sources,
-        TAXCALCBENCH_OUTPUT_ROOT=outputs,
-    )
-    countries_and_options = ["configs/cn.json", "country configs/id.json", "--single-family"]
-
-    result = subprocess.run(
-        ["bash", str(ROOT / "scripts/hpc.slurm"), *countries_and_options],
-        cwd=tmp_path, env=environment, capture_output=True, text=True, timeout=10,
-    )
-
-    assert result.returncode == 0, result.stderr
-    assert capture_args.read_bytes().decode().split("\0")[:-1] == [
-        python, "-m", "taxcalcbench", "run",
-        "--source-root", sources, "--output-root", outputs,
-        "--countries", *countries_and_options,
-    ]
-    assert Path(capture_cwd.read_text().strip()).resolve() == submitted_from.resolve()
-
-
-def test_slurm_requires_country_arguments_before_starting_srun(tmp_path, fake_slurm):
-    environment, capture_args, _, _ = fake_slurm
-    result = subprocess.run(
-        ["bash", str(ROOT / "scripts/hpc.slurm")],
-        cwd=tmp_path, env=environment, capture_output=True, text=True, timeout=10,
-    )
-
-    assert result.returncode == 1
-    assert "Usage:" in result.stderr
-    assert not capture_args.exists()

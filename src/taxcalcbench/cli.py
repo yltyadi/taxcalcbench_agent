@@ -218,7 +218,6 @@ async def execute(args: argparse.Namespace) -> dict:
         runner = ExpertRunner(config, inventory, source_dir, args.output, limits)
         try:
             result["probe"] = await runner.probe()
-            result["usage"] = runner.usage()
             result["live_test"] = True
         finally:
             close = getattr(runner, "close", None)

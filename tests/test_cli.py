@@ -287,3 +287,36 @@ def test_new_country_source_policy_and_defaults(code, language):
     assert config["generation"]["missing_information_per_family"] == 1
     assert policy["seeds"] and not policy.get("link_rules")
     assert all(seed["url"].startswith("https://") and seed["kind"] != "navigation" for seed in policy["seeds"])
+
+
+@pytest.mark.asyncio
+async def test_doctor_offline_reports_configuration_and_sources():
+    args = parser().parse_args(["doctor", "--country", "configs/pk.json"])
+    result = await cli.execute(args)
+    assert result["country"] == "PK"
+    assert result["language"] == "en"
+    assert result["live_test"] is False
+    assert "probe" not in result
+    assert "sources" in result
+
+
+@pytest.mark.asyncio
+async def test_doctor_live_runs_probe_without_duplicate_top_level_usage(tmp_path, monkeypatch):
+    class FakeRunner:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        async def probe(self):
+            return {"status": "passed", "model": "gemini-3.8-flash", "usage": {"model_calls": 2, "reported_tokens": 498}}
+
+        def usage(self):
+            return {"model_calls": 2, "reported_tokens": 498}
+
+    monkeypatch.setattr("taxcalcbench.experts.ExpertRunner", FakeRunner)
+    args = parser().parse_args(["doctor", "--country", "configs/pk.json", "--live", "--output", str(tmp_path)])
+    result = await cli.execute(args)
+    assert result["live_test"] is True
+    assert result["probe"]["status"] == "passed"
+    assert result["probe"]["usage"]["model_calls"] == 2
+    assert "usage" not in result  # Not duplicated at top level
+

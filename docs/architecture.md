@@ -15,7 +15,7 @@ flowchart LR
 
 OpenAI Agents SDK runs Gemini with separate planner, writer and reviewer contexts. Python handles official downloads, local files, arithmetic and checkpoints. There is one country and one language per run, with no database, experiment runner or runtime web search.
 
-The multi-country CLI is a sequential loop around this same single-country function. Each country has separate source and output directories; no cross-country corpus, extra agent or database is introduced. The Slurm script invokes that CLI on one allocated workstation.
+The multi-country CLI is a sequential loop around this same single-country function. Each country has separate source and output directories; no cross-country corpus, extra agent or database is introduced. On HPC, activate Conda inside a tmux/salloc session and run the same Python CLI directly.
 
 The country JSON sets official national sources, language, family size, OECD category weights and year-period weights. Downloads finish before generation; the corpus remains fixed throughout the run. An unsupported calculation must be redesigned using those files. A missing law is never replaced by memory or a fictional statutory value.
 
