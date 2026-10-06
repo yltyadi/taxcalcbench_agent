@@ -4,6 +4,7 @@
     "reasoning_effort": "low",
     "create_reasoning_effort": "high",
     "max_output_tokens": 65536,
+    "max_retries": 15,
     "timeout_seconds": 300,
     "review_reasoning_effort": "high"
   },

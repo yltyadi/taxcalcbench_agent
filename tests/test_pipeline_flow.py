@@ -313,3 +313,24 @@ async def test_persistent_missing_placeholder_stays_pending_and_allows_later_fam
     pending = result["unresolved"][0]
     assert pending["family_id"] == "A-F01" and pending["status"] == "needs_correction"
     assert any(issue.startswith(f"Question {missing_index + 1}:") and "{case_year}" in issue for issue in pending["issues"])
+
+
+async def test_transient_model_behavior_error_retries_and_succeeds(setup):
+    from taxcalcbench.experts import ExpertRunError
+
+    config, sources, output, _ = setup
+    config["generation"]["families"] = 1
+
+    class TransientModelRunner(FakeRunner):
+        attempts = 0
+
+        async def create(self, expert_id, assignment, *args, **kwargs):
+            TransientModelRunner.attempts += 1
+            if TransientModelRunner.attempts == 1:
+                raise ExpertRunError("ModelBehaviorError: response terminated with length truncation")
+            return await super().create(expert_id, assignment, *args, **kwargs)
+
+    result = await pipeline.run_pipeline(config, sources, output, runner_factory=TransientModelRunner)
+    assert result["status"] == "complete"
+    assert result["validated_questions"] == 5
+    assert TransientModelRunner.attempts == 2

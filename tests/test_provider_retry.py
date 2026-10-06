@@ -148,3 +148,32 @@ async def test_retry_count_is_configurable(runner, monkeypatch):
     with pytest.raises(ProviderUnavailable):
         await runner.probe()
     assert runner.usage()["model_calls"] == 1
+
+
+async def test_tool_call_id_collision_is_deduplicated_preventing_model_behavior_error(runner, monkeypatch):
+    requests = []
+
+    def handler(request):
+        payload = json.loads(request.content)
+        requests.append(payload)
+        if len(requests) == 1:
+            return completion({"role": "assistant", "content": None, "tool_calls": [{
+                "id": "reused-call-id", "type": "function",
+                "function": {"name": "calculate", "arguments": '{"expression":"2+3"}'}}]})
+        return completion({"role": "assistant", "content": '{"value":"5"}'})
+
+    install_transport(monkeypatch, handler)
+    # Simulate an earlier turn that had already used 'reused-call-id'
+    original_model_init = experts._MeteredModel.__init__
+
+    def metered_init(self, *args, **kwargs):
+        original_model_init(self, *args, **kwargs)
+        self.seen_call_ids.add("reused-call-id")
+
+    monkeypatch.setattr(experts._MeteredModel, "__init__", metered_init)
+    result = await runner.probe()
+    assert result["status"] == "passed" and len(requests) == 2
+    # The tool result must use the deduplicated ID, matching the assistant's rewritten tool call
+    tool_result = next(message for message in requests[1]["messages"] if message["role"] == "tool")
+    assert tool_result["tool_call_id"] != "reused-call-id"
+    assert "reused-call-id_" in tool_result["tool_call_id"]

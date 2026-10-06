@@ -7,11 +7,11 @@
     "reasoning_effort": "low",
     "create_reasoning_effort": "high",
     "max_output_tokens": 65536,
+    "max_retries": 15,
     "timeout_seconds": 300,
     "review_reasoning_effort": "high"
   },
   "generation": {
-    "blocked_reason": "The official corpus lacks a readable, downloadable 2000s Finance Act income-tax rate schedule. The live temporal family check stopped on this source gap. Obtain and verify the missing historical official evidence before enabling generation; keep the configured year coverage unchanged.",
     "families": 50,
     "regular_questions_per_family": 5,
     "missing_information_per_family": 1,

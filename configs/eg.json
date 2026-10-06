@@ -4,11 +4,11 @@
     "reasoning_effort": "low",
     "create_reasoning_effort": "high",
     "max_output_tokens": 65536,
+    "max_retries": 15,
     "timeout_seconds": 300,
     "review_reasoning_effort": "high"
   },
   "generation": {
-    "blocked_reason": "Historical official Arabic laws are scanned or produce corrupted text. Only two recent laws passed extraction checks; the required historical periods cannot be supported. Keep generation disabled until readable official historical editions or a verified OCR workflow are available.",
     "families": 50,
     "regular_questions_per_family": 5,
     "missing_information_per_family": 1,

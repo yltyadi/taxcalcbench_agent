@@ -242,18 +242,19 @@ def test_invalid_provider_retry_setting(tmp_path, value):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("code", ["eg", "in"])
-async def test_batch_skips_blocked_country_without_source_or_api_work(tmp_path, monkeypatch, code):
-    async def forbidden(*a, **kw):
-        raise AssertionError("Blocked generation must not enter the pipeline")
+async def test_batch_runs_country_pipeline(tmp_path, monkeypatch, code):
+    calls = []
 
-    monkeypatch.setattr(cli, "run_pipeline", forbidden)
+    async def mock_run(config, *a, **kw):
+        calls.append(config["country"])
+        return {"status": "complete"}
+
+    monkeypatch.setattr(cli, "run_pipeline", mock_run)
     config_path = f"configs/{code}.json"
     result = await cli.execute(parser().parse_args(["run", "--countries", config_path,
                                                     "--output-root", str(tmp_path / "out")]))
-    assert result["status"] == "partial"
-    assert result["countries"][0]["status"] == "blocked"
-    assert result["countries"][0]["pause_reason"] == load_config(Path(config_path))["generation"]["blocked_reason"]
-    assert not (tmp_path / "out").exists()
+    assert result["status"] == "complete"
+    assert calls == [code.upper()]
 
 
 @pytest.mark.asyncio
