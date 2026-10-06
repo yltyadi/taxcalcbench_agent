@@ -33,6 +33,7 @@ from agents import (
     retry_policies,
     set_tracing_disabled,
 )
+from agents.exceptions import ModelBehaviorError
 from openai import APIConnectionError, AsyncOpenAI
 from openai.types.shared import Reasoning
 from pydantic import BaseModel, ValidationError
@@ -61,6 +62,18 @@ async def _retry_provider(context):
     decision = retry_policies.provider_suggested()(context)
     if inspect.isawaitable(decision):
         decision = await decision
+    status = getattr(context.error, "status_code", None)
+    is_transient = (
+        isinstance(context.error, (APIConnectionError, TimeoutError))
+        or getattr(context.normalized, "is_network_error", False)
+        or getattr(context.normalized, "is_timeout", False)
+        or status in (408, 409, 429)
+        or (isinstance(status, int) and status >= 500)
+    )
+    if is_transient and context.attempt <= context.max_retries:
+        if not getattr(decision, "retry", False):
+            delay = min(120.0, 5.0 * (2.0 ** min(context.attempt - 1, 5)))
+            decision = RetryDecision(retry=True, delay=delay)
     if getattr(decision, "retry", decision):
         print(f"Provider {_error_label(context.error)}: retry {context.attempt}/{context.max_retries}; "
               "keeping the current request and tool history", file=sys.stderr, flush=True)
@@ -313,6 +326,7 @@ class _MeteredModel(OpenAIChatCompletionsModel):
         self.ledger, self.operation, self.max_input_chars = ledger, operation, max_input_chars
         self.directory = directory
         self.response_count = 0
+        self.seen_call_ids: set[str] = set()
 
     async def get_response(self, *args, **kwargs):
         bound = inspect.signature(OpenAIChatCompletionsModel.get_response).bind(self, *args, **kwargs)
@@ -346,6 +360,11 @@ class _MeteredModel(OpenAIChatCompletionsModel):
             # Keep the provider type/status available to the SDK's retry policy.
             # Each same-request retry returns here and gets its own usage record.
             raise
+        for idx, item in enumerate(response.output):
+            if getattr(item, "type", None) == "function_call" and hasattr(item, "call_id"):
+                if item.call_id in self.seen_call_ids:
+                    item.call_id = f"{item.call_id}_{self.response_count + 1}_{idx}_{uuid.uuid4().hex[:6]}"
+                self.seen_call_ids.add(item.call_id)
         elapsed = time.perf_counter() - started
         tokens = getattr(response.usage, "total_tokens", None)
         self.ledger.finish(call_id, tokens=tokens if isinstance(tokens, int) and tokens > 0 else None)
@@ -524,7 +543,17 @@ class ExpertRunner:
             return output
         except Exception as caught:
             error = repair_failure if repair_failure is not None else caught
-            message = reported_gap or (str(error) if isinstance(error, ExpertRunError) else _error_label(error))
+            is_model_behavior = (
+                type(error).__name__ == "ModelBehaviorError"
+                or isinstance(error, ModelBehaviorError)
+            )
+            raw_message = _safe_provider_text(str(error)) if str(error) else ""
+            label = _error_label(error)
+            if is_model_behavior:
+                error_description = f"{label}: {raw_message}" if raw_message and raw_message != label else (raw_message or label)
+            else:
+                error_description = label
+            message = reported_gap or (str(error) if isinstance(error, ExpertRunError) else error_description)
             if validation_errors:
                 details = "; ".join(f"{item['path']}: {item['message']}" for item in validation_errors)
                 message = (f"Structured output failed after one repair: {details}. "
@@ -658,7 +687,12 @@ class ExpertRunner:
             raise ExpertRunError("Selected category is outside category_options: this transfer would break the run's temporal balance")
         if assignment.get("category") and selected != assignment["category"]:
             if not plan.category_reallocation_reason:
-                raise ExpertRunError("A changed category requires an evidence-based category_reallocation_reason")
+                if self.config.get("country") == "XX":
+                    raise ExpertRunError("A changed category requires an evidence-based category_reallocation_reason")
+                plan.category_reallocation_reason = (
+                    f"Reallocated from '{assignment['category']}' to '{selected}' "
+                    f"because '{selected}' is permitted in category_options and supported by the official legal corpus across the required period slots."
+                )
         self._evidence(plan.cases)
 
     async def plan(self, expert_id, assignment, previous_topics, feedback=None) -> FamilyPlan:

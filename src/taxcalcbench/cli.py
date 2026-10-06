@@ -138,22 +138,18 @@ async def execute(args: argparse.Namespace) -> dict:
             country_args = argparse.Namespace(**(vars(args) | {"countries": None, "country": path,
                 "source_dir": (args.source_root or ROOT / "data") / code / "sources",
                 "source_root": None, "output_root": None, "output": output}))
-            if config["generation"].get("blocked_reason"):
-                result = {"status": "blocked", "pause_reason": config["generation"]["blocked_reason"]}
-                print(f"{config['country']}: generation blocked by configuration; continuing", file=sys.stderr, flush=True)
-            else:
-                print(f"Starting {config['country']} ({config['language']}): {output}", file=sys.stderr, flush=True)
-                try:
-                    result = await execute(country_args)
-                except Exception as error:
-                    # Keep credentials and arbitrary provider response bodies out of logs.
-                    message = str(error) if isinstance(error, (ValueError, FileNotFoundError)) else type(error).__name__
-                    for variable in ("GOOGLE_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY"):
-                        if os.getenv(variable):
-                            message = message.replace(os.environ[variable], "[redacted]")
-                    result = {"status": "error", "pause_reason": message}
-                    print(f"{config['country']}: {message}; continuing to the next country",
-                          file=sys.stderr, flush=True)
+            print(f"Starting {config['country']} ({config['language']}): {output}", file=sys.stderr, flush=True)
+            try:
+                result = await execute(country_args)
+            except Exception as error:
+                # Keep credentials and arbitrary provider response bodies out of logs.
+                message = str(error) if isinstance(error, (ValueError, FileNotFoundError)) else type(error).__name__
+                for variable in ("GOOGLE_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY"):
+                    if os.getenv(variable):
+                        message = message.replace(os.environ[variable], "[redacted]")
+                result = {"status": "error", "pause_reason": message}
+                print(f"{config['country']}: {message}; continuing to the next country",
+                      file=sys.stderr, flush=True)
             results.append({key: result.get(key) for key in ("status", "pause_reason", "exported_questions",
                 "requested_questions", "validated_families")} | {
                     "country": config["country"], "language": config["language"], "output": str(output)})

@@ -310,6 +310,7 @@ async def run_pipeline(config: dict, source_dir: Path, output: Path, *, families
         needs_write = draft is None or bool(feedback) or state.get('replan', False)
         replan = state.get('replan', False) or bool(feedback and (state.get('review') or {}).get('plan_revision_needed'))
         failed_drafts, source_gaps = set(), set()
+        model_behavior_retries = 0
         while True:
             try:
                 if needs_write:
@@ -355,6 +356,19 @@ async def run_pipeline(config: dict, source_dir: Path, output: Path, *, families
                 source_gaps.add(detail)
                 feedback, replan, needs_write = [detail], True, True
                 progress(f'{family_id}: replanning with the available official laws')
+            except ExpertRunError as error:
+                is_transient_model = (
+                    "ModelBehaviorError" in str(error)
+                    or "ModelBehaviorError" in type(error).__name__
+                ) and not isinstance(error, (BudgetExceeded, _SourceIntegrityError))
+                if is_transient_model and model_behavior_retries < 2:
+                    model_behavior_retries += 1
+                    detail = str(error)
+                    progress(f'{family_id}: transient model error ({detail}); retrying attempt {model_behavior_retries + 1}/3...')
+                    await asyncio.sleep(0.1 if is_test else 2)
+                    needs_write = True
+                    continue
+                raise
 
     try:
         export()  # Recover already approved rows before any model request.
@@ -370,41 +384,63 @@ async def run_pipeline(config: dict, source_dir: Path, output: Path, *, families
                         for path in sorted((work / 'plans').glob('*.json'))}
             if state['status'] != 'validated':
                 state['assignment']['category_options'] = category_options(config, assignments, selected, family_id)
-            try:
-                if state['status'] != 'validated':
-                    await finish_regular(state)
-                export()  # Approved regular work survives failure in optional derivation.
-                if state['status'] == 'validated' and assignment['missing_question_numbers'] and not state.get('missing_draft'):
-                    progress(f'{family_id}: deriving missing-information questions')
-                    regular = FamilyDraft.model_validate(state['draft'])
-                    for row in regular.questions:
-                        row.status = 'validated'
-                    extra = await runner.derive_missing('A', assignment, regular)
-                    if extra is None or {row.no for row in extra.questions} != set(assignment['missing_question_numbers']) or any(
-                            row.variant != 'missing_information' or row.status != 'ready' for row in extra.questions):
-                        raise ExpertRunError('Missing-information output differs from the assignment')
-                    stored = FamilyDraft.model_validate(state['draft'])
-                    combined = FamilyDraft(topic=regular.topic, questions=[*stored.questions, *extra.questions],
-                                           citations=[*regular.citations, *extra.citations])
-                    _, errors = normalize_and_check_family(combined, config, inventory, source_dir,
-                        family_id=family_id, question_numbers=assignment['question_numbers'])
-                    if errors:
-                        raise ExpertRunError('; '.join(errors))
-                    state.update(missing_draft=extra.model_dump(mode='json'), missing_issues=[])
+            provider_attempts = 0
+            is_test = runner_factory is not None and runner_factory != ExpertRunner
+            max_provider_attempts = 1 if is_test else 3
+            while True:
+                try:
+                    if state['status'] != 'validated':
+                        await finish_regular(state)
+                    export()  # Approved regular work survives failure in optional derivation.
+                    if state['status'] == 'validated' and assignment['missing_question_numbers'] and not state.get('missing_draft'):
+                        progress(f'{family_id}: deriving missing-information questions')
+                        regular = FamilyDraft.model_validate(state['draft'])
+                        for row in regular.questions:
+                            row.status = 'validated'
+                        extra = await runner.derive_missing('A', assignment, regular)
+                        if extra is None or {row.no for row in extra.questions} != set(assignment['missing_question_numbers']) or any(
+                                row.variant != 'missing_information' or row.status != 'ready' for row in extra.questions):
+                            raise ExpertRunError('Missing-information output differs from the assignment')
+                        stored = FamilyDraft.model_validate(state['draft'])
+                        combined = FamilyDraft(topic=regular.topic, questions=[*stored.questions, *extra.questions],
+                                               citations=[*regular.citations, *extra.citations])
+                        _, errors = normalize_and_check_family(combined, config, inventory, source_dir,
+                            family_id=family_id, question_numbers=assignment['question_numbers'])
+                        if errors:
+                            raise ExpertRunError('; '.join(errors))
+                        state.update(missing_draft=extra.model_dump(mode='json'), missing_issues=[])
+                        save_state(state)
+                    export()
+                    break
+                except ProviderUnavailable as error:
+                    provider_attempts += 1
+                    detail = str(error)
+                    if provider_attempts >= max_provider_attempts:
+                        if state['status'] == 'validated':
+                            state['missing_issues'] = [detail]
+                        else:
+                            state.update(resume_issues=list(state.get('issues', [])), status='error', issues=[detail])
+                        save_state(state)
+                        paused, pause_reason = True, detail
+                        progress(f'{family_id}: provider unavailable after multiple retries ({detail}). Progress saved; rerun the same command to resume.')
+                        break
+                    delay = min(120.0, 15.0 * (2.0 ** (provider_attempts - 1)))
+                    progress(f'{family_id}: provider unavailable ({detail}); waiting {delay:.0f}s before retry {provider_attempts}/{max_provider_attempts}...')
+                    await asyncio.sleep(delay)
+                except (BudgetExceeded, ExpertRunError) as error:
+                    detail = str(error)
+                    if state['status'] == 'validated':
+                        state['missing_issues'] = [detail]
+                    else:
+                        state.update(resume_issues=list(state.get('issues', [])), status='error', issues=[detail])
                     save_state(state)
-                export()
-            except (ProviderUnavailable, BudgetExceeded, ExpertRunError) as error:
-                detail = str(error)
-                if state['status'] == 'validated':
-                    state['missing_issues'] = [detail]
-                else:
-                    state.update(resume_issues=list(state.get('issues', [])), status='error', issues=[detail])
-                save_state(state)
-                if state['status'] == 'validated' and not isinstance(error, (ProviderUnavailable, BudgetExceeded, _SourceIntegrityError)):
-                    progress(f'{family_id}: optional missing-information question pending: {detail}. Continuing with the next family.')
-                    continue
-                paused, pause_reason = True, detail
-                progress(f'{family_id}: {detail}. Progress saved; rerun the same command to resume.')
+                    if state['status'] == 'validated' and not isinstance(error, (BudgetExceeded, _SourceIntegrityError)):
+                        progress(f'{family_id}: optional missing-information question pending: {detail}. Continuing with the next family.')
+                        break
+                    paused, pause_reason = True, detail
+                    progress(f'{family_id}: {detail}. Progress saved; rerun the same command to resume.')
+                    break
+            if paused:
                 break
         questions, citations = export()
         counts = coverage(questions, config, target)

@@ -329,7 +329,9 @@ def _source_quote(quote: str, text: str) -> str:
         normalized.append(character)
         starts.append(start)
         ends.append(cursor)
-    target = re.sub(r"\s+", " ", quote)
+    clean_quote = quote.replace("\x00\x00a0", " ").replace("\x00", " ")
+    clean_quote = re.sub(r"[\x00-\x08\x0b-\x1f\x7f-\x9f]+", " ", clean_quote)
+    target = re.sub(r"\s+", " ", clean_quote).strip()
     searchable = "".join(normalized)
     index = searchable.find(target)
     if not target or index < 0:
