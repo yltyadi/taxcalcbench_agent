@@ -14,3 +14,4 @@ taxcalcbench-*.log
 outputs_local/
 full_benchmark_data.tar.gz
 kz_bundle.tar.gz
+kz_kk_bundle.tar.gz
