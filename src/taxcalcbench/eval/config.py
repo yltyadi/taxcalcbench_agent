@@ -4,11 +4,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
-DEV_FAMILIES: set[str] = {"A-F01", "A-F02", "A-F03", "A-F04", "A-F05"}
-
 ConditionType = Literal[
     "closed_book_cot",
     "oracle_cot",
+    "closed_book_program_cot",
+    "oracle_program_cot",
 ]
 
 
@@ -22,7 +22,11 @@ class EvalConfig:
     output_dir: Path = Path("outputs/eval")
     model: str = "gemini-3.8-flash"
     conditions: list[ConditionType] = field(default_factory=lambda: ["closed_book_cot", "oracle_cot"])
-    split: Literal["dev", "test", "all"] = "dev"
+    split: str = "full"
+    families: list[str] | None = None
+    limit: int | None = None
     max_concurrency: int = 5
+    timeout_seconds: float = 60.0
+    max_retries: int = 10
     temperature: float = 0.0
     max_output_tokens: int = 8192

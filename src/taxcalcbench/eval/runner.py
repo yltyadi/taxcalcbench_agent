@@ -8,7 +8,14 @@ from pathlib import Path
 from typing import Any
 
 from dotenv import load_dotenv
-from openai import APIConnectionError, AsyncOpenAI, InternalServerError, RateLimitError
+from openai import (
+    APIConnectionError,
+    APIError,
+    APITimeoutError,
+    AsyncOpenAI,
+    InternalServerError,
+    RateLimitError,
+)
 
 from .config import EvalConfig
 from .dataset import load_evaluation_dataset
@@ -19,13 +26,15 @@ from .prompts import build_eval_prompt
 load_dotenv()
 
 
-def get_api_client() -> AsyncOpenAI:
+def get_api_client(timeout_seconds: float = 60.0) -> AsyncOpenAI:
     api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     if not api_key:
         raise RuntimeError("Missing GEMINI_API_KEY or GOOGLE_API_KEY in environment or .env")
     return AsyncOpenAI(
         api_key=api_key,
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        timeout=timeout_seconds,
+        max_retries=0,
     )
 
 
@@ -35,9 +44,10 @@ async def call_model_with_retry(
     prompt: str,
     temperature: float = 0.0,
     max_tokens: int = 8192,
+    timeout_seconds: float = 60.0,
     max_retries: int = 10,
 ) -> str:
-    """Call model with robust exponential backoff on transient errors."""
+    """Call model with robust exponential backoff on transient errors and timeouts."""
     for attempt in range(max_retries):
         try:
             response = await client.chat.completions.create(
@@ -45,9 +55,18 @@ async def call_model_with_retry(
                 messages=[{"role": "user", "content": prompt}],
                 temperature=temperature,
                 max_tokens=max_tokens,
+                timeout=timeout_seconds,
             )
             return response.choices[0].message.content or ""
-        except (RateLimitError, InternalServerError, APIConnectionError, TimeoutError) as exc:
+        except (
+            RateLimitError,
+            InternalServerError,
+            APIConnectionError,
+            APITimeoutError,
+            TimeoutError,
+            asyncio.TimeoutError,
+            APIError,
+        ) as exc:
             if attempt == max_retries - 1:
                 raise
             delay = min(60.0, 3.0 * (2.0 ** min(attempt, 4)))
@@ -69,29 +88,39 @@ async def evaluate_single_question(
     q_no = question["no"]
     checkpoint_file = work_dir / f"{q_no}.json"
 
-    # Reuse existing checkpoint if present
+    # Reuse existing checkpoint if present and valid
     if checkpoint_file.exists():
         try:
             with open(checkpoint_file, encoding="utf-8") as f:
                 record = json.load(f)
-            return record
+            # If checkpoint has a valid raw_response and not an error, reuse it
+            if record.get("raw_response") and not str(record.get("raw_response")).startswith("[EVALUATION ERROR"):
+                return record
         except Exception:
             pass
 
     prompt = build_eval_prompt(question, condition, citations)
 
-    async with sem:
-        t0 = time.perf_counter()
-        raw_response = await call_model_with_retry(
-            client=client,
-            model=config.model,
-            prompt=prompt,
-            temperature=config.temperature,
-            max_tokens=config.max_output_tokens,
-        )
-        elapsed = time.perf_counter() - t0
+    try:
+        async with sem:
+            t0 = time.perf_counter()
+            raw_response = await call_model_with_retry(
+                client=client,
+                model=config.model,
+                prompt=prompt,
+                temperature=config.temperature,
+                max_tokens=config.max_output_tokens,
+                timeout_seconds=config.timeout_seconds,
+                max_retries=config.max_retries,
+            )
+            elapsed = time.perf_counter() - t0
+    except Exception as exc:
+        print(f"Warning: Question {q_no} evaluation failed after retries ({type(exc).__name__}: {exc})")
+        raw_response = f"[EVALUATION ERROR: {type(exc).__name__}: {exc}]"
+        elapsed = 0.0
 
-    pred_value, pred_unit = extract_answer(raw_response)
+    is_program = "program_cot" in condition
+    pred_value, pred_unit = extract_answer(raw_response, is_program=is_program)
 
     record = {
         "question_no": q_no,
@@ -131,7 +160,7 @@ async def run_evaluation_condition(
     print(f"Model: {config.model} | Split: {config.split}")
     print(f"=======================================================")
 
-    client = get_api_client()
+    client = get_api_client(timeout_seconds=config.timeout_seconds)
     cond_dir = config.output_dir / config.country / condition
     work_dir = cond_dir / "work"
     work_dir.mkdir(parents=True, exist_ok=True)
@@ -166,11 +195,11 @@ async def run_evaluation_condition(
         "metrics": metrics,
     }
 
-    summary_file = cond_dir / "summary.json"
+    summary_file = cond_dir / f"summary_{config.split}.json"
     with open(summary_file, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
 
-    records_file = cond_dir / "records.json"
+    records_file = cond_dir / f"records_{config.split}.json"
     with open(records_file, "w", encoding="utf-8") as f:
         json.dump(records, f, indent=2, ensure_ascii=False)
 
@@ -186,15 +215,23 @@ async def run_evaluation_condition(
 
 async def evaluate_dataset(config: EvalConfig) -> dict[str, Any]:
     """Execute evaluation across all configured conditions."""
-    questions, citations_map = load_evaluation_dataset(config.dataset_dir, split=config.split)
-    print(f"Loaded {len(questions)} questions for country {config.country} (split={config.split})")
+    questions, citations_map, dev_families = load_evaluation_dataset(
+        config.dataset_dir,
+        split=config.split,
+        families=config.families,
+        limit=config.limit,
+    )
+    print(
+        f"Loaded {len(questions)} questions for country '{config.country}' "
+        f"(split='{config.split}', dev_families={sorted(dev_families)})"
+    )
 
     results = {}
     for condition in config.conditions:
         summary = await run_evaluation_condition(condition, questions, citations_map, config)
         results[condition] = summary
 
-    # Save global comparison summary
+    # Save comparison summary
     comp_file = config.output_dir / config.country / f"comparison_{config.split}.json"
     with open(comp_file, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2, ensure_ascii=False)

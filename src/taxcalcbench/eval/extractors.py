@@ -3,10 +3,13 @@
 import re
 from typing import Any
 
+from .sandbox import execute_python_code
+
 INSUFFICIENT_INFO = "insufficient information"
 BOXED_PATTERN = re.compile(r"\\boxed\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}", re.IGNORECASE)
 FINAL_ANSWER_PATTERN = re.compile(r"\[FINAL ANSWER\]:\s*([^\n\r]+)", re.IGNORECASE)
 NUMBER_PATTERN = re.compile(r"[-+]?(?:[0-9]+(?:[\s,][0-9]+)*(?:\.[0-9]+)?|\.[0-9]+)")
+PYTHON_BLOCK_PATTERN = re.compile(r"```(?:python)?\s*([\s\S]*?)```", re.IGNORECASE)
 
 
 def normalize_numeric_string(raw: str) -> str:
@@ -19,7 +22,7 @@ def normalize_numeric_string(raw: str) -> str:
     return cleaned
 
 
-def extract_answer(response_text: str) -> tuple[str | None, str | None]:
+def extract_answer(response_text: str, is_program: bool = False) -> tuple[str | None, str | None]:
     """Extract prediction value and optional unit from model completion.
 
     Returns:
@@ -29,6 +32,21 @@ def extract_answer(response_text: str) -> tuple[str | None, str | None]:
         return None, None
 
     text = response_text.strip()
+
+    # 0. If program-aided or code block present, attempt execution first
+    if is_program or "```" in text:
+        code_blocks = PYTHON_BLOCK_PATTERN.findall(text)
+        if code_blocks:
+            code = code_blocks[-1].strip()
+            exec_res = execute_python_code(code)
+            if exec_res.get("success") and exec_res.get("value") is not None:
+                val = str(exec_res["value"]).strip()
+                if "insufficient information" in val.lower() or "недостаточно информации" in val.lower():
+                    return INSUFFICIENT_INFO, None
+                num_match = NUMBER_PATTERN.search(val)
+                if num_match:
+                    return normalize_numeric_string(num_match.group(0)), None
+                return val, None
 
     # 1. Check for boxed answer
     boxed_matches = BOXED_PATTERN.findall(text)

@@ -86,13 +86,19 @@ To guarantee scientific validity and eliminate data contamination, partitioning 
         • Calibration & Parameter Tuning                        • FROZEN Benchmark Evaluation
 ```
 
-### 3.1 Development Set Profile (`A-F01` to `A-F05`)
-The 5 dev families provide balanced representation across tax bases, periods, and variant types:
-- **`A-F01`**: Corporate Income Tax (CIT) deductions and net taxable income (`1000`, Contemporary `2020–2026`).
-- **`A-F02`**: Immovable property tax and land valuation base (`4000`, Intermediate `2010–2019`).
-- **`A-F03`**: Value Added Tax (VAT) turnover, offset credits, and payable tax (`5000`, Historical `2000–2009`).
-- **`A-F04`**: Social tax and employer payroll levies (`3000`, Contemporary `2020–2026`).
-- **`A-F05`**: Personal Income Tax (PIT) progressive deductions and standard allowances (`1000`, Contemporary `2020–2026`).
+### 3.1 Universal Dataset Partitioning & Dynamic Category-Aware Balancing
+To prevent categorical or temporal bias when sampling development subsets across diverse jurisdictions:
+- **Default Full Evaluation (`--split full` / `--split all`)**: Evaluates all 50 families (300 questions) in their entirety without artificial partitioning.
+- **Dynamic Category-Aware Development Split (`--split dev`)**: Rather than hardcoding fixed family IDs, the partitioner dynamically groups families by their authoritative OECD `tax_category` and deterministically selects 1 representative family per distinct tax category present in that jurisdiction's corpus.
+- **Evaluation Split (`--split test`)**: Evaluates the frozen complement (all remaining families).
+- **Explicit Subsets (`--families` / `--limit`)**: Permits running custom family subsets or limiting evaluation to the first $N$ questions for rapid verification.
+
+In Kazakhstan, the category-balanced split selects families representing 5 distinct tax bases:
+- **`A-F01`**: Corporate Income Tax (`1000`, Contemporary `2020–2026`).
+- **`A-F02`**: Immovable Property & Land Tax (`4000`, Intermediate `2010–2019`).
+- **`A-F03`**: Value Added Tax (`5000`, Historical `2000–2009`).
+- **`A-F05`**: Social Tax & Payroll Levies (`3000`, Contemporary `2020–2026`).
+- **`A-F06`**: Vehicle / Other Taxes (`6000`, Contemporary `2020–2026`).
 
 ### 3.2 Calibration Objectives on the Development Set
 The Development Set will be used exclusively to test, calibrate, and freeze:
@@ -103,16 +109,17 @@ The Development Set will be used exclusively to test, calibrate, and freeze:
 5. **Scoring Margins & Rounding**: Calibrating strict vs. lenient tolerances against ground-truth values.
 
 ### 3.3 Empirical Findings on Development & Test Sets (Pilot Baseline)
-The pilot evaluation on Kazakhstan (`KZ` - Russian) confirmed the stability of the evaluation harness (`src/taxcalcbench/eval/`) across both the 30-question Dev set and the 270-question Test set:
+The pilot evaluation on Kazakhstan confirmed the stability of the evaluation harness (`src/taxcalcbench/eval/`) across both Russian (`kz`) and Kazakh (`kz_kk`) datasets, as well as the implementation of Program-Aided CoT (`sandbox.py`):
 * **Development Split (30 questions, 5 families)**:
-  * Closed-Book CoT: Solvable Exact Match of **68.0%** (17/25) and Family Consistency of **20.0%** (1/5 families).
-  * Oracle Grounding CoT: Solvable Exact Match of **100.0%** (25/25) and Family Consistency of **100.0%** (5/5 families).
+  * Closed-Book CoT: Solvable Exact Match of **68.0%** in Russian vs. **64.0%** in Kazakh.
+  * Oracle Grounding CoT: Solvable Exact Match of **100.0%** in Russian vs. **96.0%** in Kazakh.
+  * Program-Aided CoT (PoT): Closed-Book **60.0%** $\rightarrow$ Oracle Grounding **96.0%**.
 * **Frozen Test Split (270 questions, 45 families)**:
-  * Closed-Book CoT: Solvable Exact Match of **47.6%** (107/225) and Family Consistency of **13.3%** (6/45 families).
-  * Oracle Grounding CoT: Solvable Exact Match of **93.8%** (211/225) and Family Consistency of **77.8%** (35/45 families) ($\Delta = \mathbf{+46.2\%}$ Exact Match, $\mathbf{+64.5\%}$ Family Consistency).
+  * Closed-Book CoT: Solvable Exact Match of **47.6%** in Russian vs. **49.3%** in Kazakh (Linguistic parity within $\pm 2\%$).
+  * Oracle Grounding CoT: Solvable Exact Match of **93.8%** in Russian vs. **92.0%** in Kazakh ($\Delta = \mathbf{+46.2\%}$ over closed-book).
   * **Longitudinal Recency Bias**: Closed-book accuracy collapses from **55.6%** (2020–2026) to **26.7%** (2000–2009) ($\Delta_{\text{temp}} = 28.9\%$). Oracle grounding restores 2000s accuracy to **86.7%**.
   * **Temporal Counterpart Brittleness**: Solvable base cases score 57.8%, but their paired temporal counterparts drop to 26.7% in closed-book mode due to parametric projection of modern rates onto historical years.
-* Complete live logs, metric tables, and bilingual evaluation designs are maintained in **`EXPERIMENT_STATUS.md`**.
+* Complete live logs, metric tables, bilingual evaluation comparisons, and step-by-step reasoning plans are maintained in **`EXPERIMENT_STATUS.md`**.
 
 ---
 
