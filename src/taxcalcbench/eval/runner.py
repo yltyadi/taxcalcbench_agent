@@ -1,0 +1,202 @@
+"""Asynchronous execution runner for TaxCalcBench benchmark evaluations."""
+
+import asyncio
+import json
+import os
+import time
+from pathlib import Path
+from typing import Any
+
+from dotenv import load_dotenv
+from openai import APIConnectionError, AsyncOpenAI, InternalServerError, RateLimitError
+
+from .config import EvalConfig
+from .dataset import load_evaluation_dataset
+from .extractors import extract_answer
+from .metrics import compute_metrics
+from .prompts import build_eval_prompt
+
+load_dotenv()
+
+
+def get_api_client() -> AsyncOpenAI:
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        raise RuntimeError("Missing GEMINI_API_KEY or GOOGLE_API_KEY in environment or .env")
+    return AsyncOpenAI(
+        api_key=api_key,
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+    )
+
+
+async def call_model_with_retry(
+    client: AsyncOpenAI,
+    model: str,
+    prompt: str,
+    temperature: float = 0.0,
+    max_tokens: int = 8192,
+    max_retries: int = 10,
+) -> str:
+    """Call model with robust exponential backoff on transient errors."""
+    for attempt in range(max_retries):
+        try:
+            response = await client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+            return response.choices[0].message.content or ""
+        except (RateLimitError, InternalServerError, APIConnectionError, TimeoutError) as exc:
+            if attempt == max_retries - 1:
+                raise
+            delay = min(60.0, 3.0 * (2.0 ** min(attempt, 4)))
+            print(f"Provider {type(exc).__name__}: retry {attempt + 1}/{max_retries}; waiting {delay:.1f}s...")
+            await asyncio.sleep(delay)
+    return ""
+
+
+async def evaluate_single_question(
+    client: AsyncOpenAI,
+    question: dict[str, Any],
+    citations: list[dict[str, Any]],
+    condition: str,
+    config: EvalConfig,
+    work_dir: Path,
+    sem: asyncio.Semaphore,
+) -> dict[str, Any]:
+    """Evaluate one question and save its checkpoint."""
+    q_no = question["no"]
+    checkpoint_file = work_dir / f"{q_no}.json"
+
+    # Reuse existing checkpoint if present
+    if checkpoint_file.exists():
+        try:
+            with open(checkpoint_file, encoding="utf-8") as f:
+                record = json.load(f)
+            return record
+        except Exception:
+            pass
+
+    prompt = build_eval_prompt(question, condition, citations)
+
+    async with sem:
+        t0 = time.perf_counter()
+        raw_response = await call_model_with_retry(
+            client=client,
+            model=config.model,
+            prompt=prompt,
+            temperature=config.temperature,
+            max_tokens=config.max_output_tokens,
+        )
+        elapsed = time.perf_counter() - t0
+
+    pred_value, pred_unit = extract_answer(raw_response)
+
+    record = {
+        "question_no": q_no,
+        "family": question.get("family"),
+        "variant": question.get("variant"),
+        "case_year": question.get("case_year"),
+        "year_period_target": question.get("year_period_target"),
+        "tax_category": question.get("tax_category"),
+        "difficulty": question.get("difficulty"),
+        "condition": condition,
+        "model": config.model,
+        "gold_answer": str(question.get("answer_value", "")).strip(),
+        "gold_unit": question.get("unit"),
+        "pred_value": pred_value,
+        "pred_unit": pred_unit,
+        "elapsed_seconds": round(elapsed, 2),
+        "prompt": prompt,
+        "raw_response": raw_response,
+    }
+
+    # Save incremental checkpoint
+    with open(checkpoint_file, "w", encoding="utf-8") as f:
+        json.dump(record, f, indent=2, ensure_ascii=False)
+
+    return record
+
+
+async def run_evaluation_condition(
+    condition: str,
+    questions: list[dict[str, Any]],
+    citations_map: dict[int, list[dict[str, Any]]],
+    config: EvalConfig,
+) -> dict[str, Any]:
+    """Run evaluation across all questions for a single condition."""
+    print(f"\n=======================================================")
+    print(f"Running condition: {condition} ({len(questions)} questions)")
+    print(f"Model: {config.model} | Split: {config.split}")
+    print(f"=======================================================")
+
+    client = get_api_client()
+    cond_dir = config.output_dir / config.country / condition
+    work_dir = cond_dir / "work"
+    work_dir.mkdir(parents=True, exist_ok=True)
+
+    sem = asyncio.Semaphore(config.max_concurrency)
+
+    tasks = [
+        evaluate_single_question(
+            client=client,
+            question=q,
+            citations=citations_map.get(q["no"], []),
+            condition=condition,
+            config=config,
+            work_dir=work_dir,
+            sem=sem,
+        )
+        for q in questions
+    ]
+
+    records = await asyncio.gather(*tasks)
+    records.sort(key=lambda r: r["question_no"])
+
+    # Compute metrics
+    metrics = compute_metrics(records)
+
+    # Save summary
+    summary = {
+        "country": config.country,
+        "split": config.split,
+        "condition": condition,
+        "model": config.model,
+        "metrics": metrics,
+    }
+
+    summary_file = cond_dir / "summary.json"
+    with open(summary_file, "w", encoding="utf-8") as f:
+        json.dump(summary, f, indent=2, ensure_ascii=False)
+
+    records_file = cond_dir / "records.json"
+    with open(records_file, "w", encoding="utf-8") as f:
+        json.dump(records, f, indent=2, ensure_ascii=False)
+
+    print(f"\nCondition {condition} complete!")
+    print(f"  Exact Match (All):      {metrics['overall_exact_match'] * 100:.1f}%")
+    print(f"  Tolerant Match (All):   {metrics['overall_tolerant_match'] * 100:.1f}%")
+    print(f"  Solvable Exact Match:   {metrics['solvable_exact_match'] * 100:.1f}%")
+    print(f"  Missing Info Accuracy:  {metrics['abstention_accuracy'] * 100:.1f}%")
+    print(f"  Family Consistency:     {metrics['family_consistency_score'] * 100:.1f}%")
+
+    return summary
+
+
+async def evaluate_dataset(config: EvalConfig) -> dict[str, Any]:
+    """Execute evaluation across all configured conditions."""
+    questions, citations_map = load_evaluation_dataset(config.dataset_dir, split=config.split)
+    print(f"Loaded {len(questions)} questions for country {config.country} (split={config.split})")
+
+    results = {}
+    for condition in config.conditions:
+        summary = await run_evaluation_condition(condition, questions, citations_map, config)
+        results[condition] = summary
+
+    # Save global comparison summary
+    comp_file = config.output_dir / config.country / f"comparison_{config.split}.json"
+    with open(comp_file, "w", encoding="utf-8") as f:
+        json.dump(results, f, indent=2, ensure_ascii=False)
+
+    return results

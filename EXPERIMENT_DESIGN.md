@@ -102,6 +102,18 @@ The Development Set will be used exclusively to test, calibrate, and freeze:
 4. **Python Sandbox Execution Rules**: Tuning timeouts (5s limit), pre-imported libraries (`decimal.Decimal`), and variable capture.
 5. **Scoring Margins & Rounding**: Calibrating strict vs. lenient tolerances against ground-truth values.
 
+### 3.3 Empirical Findings on Development & Test Sets (Pilot Baseline)
+The pilot evaluation on Kazakhstan (`KZ` - Russian) confirmed the stability of the evaluation harness (`src/taxcalcbench/eval/`) across both the 30-question Dev set and the 270-question Test set:
+* **Development Split (30 questions, 5 families)**:
+  * Closed-Book CoT: Solvable Exact Match of **68.0%** (17/25) and Family Consistency of **20.0%** (1/5 families).
+  * Oracle Grounding CoT: Solvable Exact Match of **100.0%** (25/25) and Family Consistency of **100.0%** (5/5 families).
+* **Frozen Test Split (270 questions, 45 families)**:
+  * Closed-Book CoT: Solvable Exact Match of **47.6%** (107/225) and Family Consistency of **13.3%** (6/45 families).
+  * Oracle Grounding CoT: Solvable Exact Match of **93.8%** (211/225) and Family Consistency of **77.8%** (35/45 families) ($\Delta = \mathbf{+46.2\%}$ Exact Match, $\mathbf{+64.5\%}$ Family Consistency).
+  * **Longitudinal Recency Bias**: Closed-book accuracy collapses from **55.6%** (2020–2026) to **26.7%** (2000–2009) ($\Delta_{\text{temp}} = 28.9\%$). Oracle grounding restores 2000s accuracy to **86.7%**.
+  * **Temporal Counterpart Brittleness**: Solvable base cases score 57.8%, but their paired temporal counterparts drop to 26.7% in closed-book mode due to parametric projection of modern rates onto historical years.
+* Complete live logs, metric tables, and bilingual evaluation designs are maintained in **`EXPERIMENT_STATUS.md`**.
+
 ---
 
 ## 4. The Experimental Matrix: Retrieval Regimes $\times$ Reasoning Modalities

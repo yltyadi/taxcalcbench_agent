@@ -87,6 +87,7 @@ As of October 2026, **all datasets are 100% complete and validated with 0 errors
 ```text
 taxcalcbench_agent/
 ├── EXPERIMENT_DESIGN.md       # Comprehensive experimental evaluation framework & research plan
+├── EXPERIMENT_STATUS.md       # Live evaluation progress, metrics, and bilingual KZ benchmark status
 ├── CONTEXT_WINDOW.md          # Authoritative system specification and context window
 ├── configs/                   # Country configuration files
 │   ├── cn.json                # China configuration
@@ -123,8 +124,10 @@ taxcalcbench_agent/
 ├── scripts/                   # Specialized extraction & conversion utilities
 │   ├── extract_egypt.py       # Multimodal OCR pipeline for Egyptian Arabic PDFs
 │   ├── download_kazakh_sources.py  # Downloader & HTML parser for official Kazakh Adilet laws
-│   └── translate_kazakh_pipeline.py # Rerunnable agentic RU -> KK translation & citation alignment
+│   ├── translate_kazakh_pipeline.py # Rerunnable agentic RU -> KK translation & citation alignment
+│   └── run_eval.py            # CLI evaluator for Closed-Book and Oracle Grounding experiments
 ├── src/taxcalcbench/          # Core implementation package
+│   ├── eval/                  # Experimental evaluation harness (runner, dataset, extractors, metrics)
 │   ├── cli.py                 # Command-line entry points
 │   ├── experts.py             # Agent definitions, tools, metering, and retries
 │   ├── pipeline.py            # Main generation, review, and export orchestrator
@@ -201,6 +204,12 @@ For the pilot country (Kazakhstan `KZ`):
    - 95% Confidence Intervals via **block bootstrap resampling across complete families**.
 6. **10-Tier Diagnostic Error Taxonomy**:
    - E1 (Evidence Retrieval Failure), E2 (Wrong-Country Retrieval), E3 (Incorrect Historical Version), E4 (Partial Evidence Retrieval), E5 (Classification Error), E6 (Threshold/Bracket Error), E7 (Arithmetic/Rounding Error), E8 (Unsupported Citation), E9 (False Precision on Missing Info), E10 (Unnecessary Abstention).
+
+### F. Completed Evaluation Results (Kazakhstan Pilot — Russian)
+- **Dev Set (30 questions, 5 families)**: Closed-Book Exact Match 68.0% $\rightarrow$ Oracle Grounding 100.0% ($\Delta = +32.0\%$). Family Consistency: 20.0% $\rightarrow$ 100.0%.
+- **Test Set (270 questions, 45 families)**: Closed-Book Solvable Exact Match 47.6% $\rightarrow$ Oracle Grounding 93.8% ($\Delta = +46.2\%$). Family Consistency: 13.3% $\rightarrow$ 77.8% ($\Delta = +64.5\%$).
+- **Recency Decay**: Closed-book accuracy collapses from 55.6% (2020–2026) down to 26.7% (2000–2009) ($\Delta_{\text{temp}} = 28.9\%$). Oracle grounding restores 2000s accuracy to 86.7%.
+- Full live audit logs, metric tables, and bilingual KZ methodologies are maintained in **`EXPERIMENT_STATUS.md`**.
 
 ---
 
@@ -320,7 +329,12 @@ python scripts/translate_kazakh_pipeline.py
 python scripts/translate_kazakh_pipeline.py --family A-F01
 python scripts/translate_kazakh_pipeline.py --export-only
 
-# 4. Verify questions and citations integrity locally
+# 4. Run experimental evaluations (Closed-Book & Oracle Grounding)
+python scripts/run_eval.py --country kz --split dev --conditions closed_book_cot oracle_cot
+python scripts/run_eval.py --country kz --split test --conditions closed_book_cot oracle_cot
+python scripts/run_eval.py --country kz_kk --split dev --conditions closed_book_cot oracle_cot
+
+# 5. Verify questions and citations integrity locally
 python -c "
 import json
 for c in ['cn', 'eg', 'id', 'in', 'kz', 'kz_kk', 'pk', 'pl']:
