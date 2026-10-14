@@ -20,21 +20,27 @@ def format_oracle_citations(citations: list[dict[str, Any]]) -> str:
     return "\n".join(lines)
 
 
+def format_retrieved_chunks(chunks: list[dict[str, Any]]) -> str:
+    """Format retrieved RAG chunks into prompt context."""
+    if not chunks:
+        return ""
+
+    lines = ["[RETRIEVED OFFICIAL STATUTORY PASSAGES]:"]
+    for idx, ch in enumerate(chunks, 1):
+        title = ch.get("title", "")
+        text = ch.get("text", "").strip()
+        lines.append(f"[Passage {idx} — {title}]:\n{text}\n")
+
+    return "\n".join(lines)
+
+
 def build_eval_prompt(
     question: dict[str, Any],
     condition: str,
     citations: list[dict[str, Any]] | None = None,
+    retrieved_chunks: list[dict[str, Any]] | None = None,
 ) -> str:
-    """Build standardized user prompt according to condition.
-
-    Args:
-        question: QuestionRow dictionary.
-        condition: 'closed_book_cot' or 'oracle_cot'.
-        citations: Optional list of gold citations (for oracle_cot).
-
-    Returns:
-        Formatted prompt string.
-    """
+    """Build standardized user prompt according to condition."""
     country = question.get("country", "")
     case_year = question.get("case_year", "")
     q_text = question.get("question", "").strip()
@@ -43,6 +49,11 @@ def build_eval_prompt(
 
     if condition in ("oracle_cot", "oracle_program_cot") and citations:
         context_str = format_oracle_citations(citations)
+        if context_str:
+            parts.append(context_str)
+            parts.append("")
+    elif "rag" in condition and retrieved_chunks:
+        context_str = format_retrieved_chunks(retrieved_chunks)
         if context_str:
             parts.append(context_str)
             parts.append("")

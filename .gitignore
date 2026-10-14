@@ -11,6 +11,9 @@ data/
 outputs/
 taxcalcbench-*.log
 .DS_Store
+._*
+.vscode/
+*.tar.gz
 outputs_local/
 full_benchmark_data.tar.gz
 kz_bundle.tar.gz

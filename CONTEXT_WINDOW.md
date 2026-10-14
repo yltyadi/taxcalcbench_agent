@@ -205,12 +205,20 @@ For the pilot country (Kazakhstan `KZ`):
 6. **10-Tier Diagnostic Error Taxonomy**:
    - E1 (Evidence Retrieval Failure), E2 (Wrong-Country Retrieval), E3 (Incorrect Historical Version), E4 (Partial Evidence Retrieval), E5 (Classification Error), E6 (Threshold/Bracket Error), E7 (Arithmetic/Rounding Error), E8 (Unsupported Citation), E9 (False Precision on Missing Info), E10 (Unnecessary Abstention).
 
-### F. Completed Evaluation Results (Kazakhstan Bilingual Pilot & Step 2)
-- **Dev Set (30 questions)**: Closed-Book Exact Match 68.0% (RU) / 64.0% (KK) $\rightarrow$ Oracle Grounding 100.0% (RU) / 96.0% (KK). Program-Aided CoT: Closed-Book 60.0% $\rightarrow$ Oracle Grounding 96.0%.
-- **Test Set (270 questions)**: Closed-Book Solvable Exact Match 47.6% (RU) / 49.3% (KK) $\rightarrow$ Oracle Grounding 93.8% (RU) / 92.0% (KK) ($\Delta = +46.2\%$ over closed-book). Family Consistency: 13.3% $\rightarrow$ 77.8%.
-- **Bilingual Parity**: Performance between Russian and Kazakh matches within $\pm 2\%$, confirming statutory tax calculations are solvable in native Kazakh when grounded in Adilet statutes.
-- **Recency Decay**: Closed-book accuracy collapses from 55.6% (2020–2026) down to 26.7% (2000–2009) ($\Delta_{\text{temp}} = 28.9\%$). Oracle grounding restores 2000s accuracy to 86.7%.
-- Full live audit logs, metric tables, and bilingual KZ methodologies are maintained in **`EXPERIMENT_STATUS.md`**.
+### F. Completed Evaluation Results (Complete $3 \times 2$ Matrix & RAG Ablations on Kazakhstan — All 300 Questions)
+- **Condition 1 (Closed-Book)**:
+  - Text CoT (`closed_book_cot`): Solvable Exact Match **51.2%** (RU) / **52.8%** (KK); Family Consistency **16.0%** (RU & KK).
+  - Program-Aided CoT (`closed_book_program_cot`): Solvable Exact Match jumps to **60.8%** (RU, **+9.6%**) / **58.8%** (KK, **+6.0%**).
+- **Condition 3 (Multi-Retriever Statutory RAG)**:
+  - Vanilla BM25 (`bm25_rag_cot`, $k=5$): Solvable Exact Match **73.6%** (RU) / **69.6%** (KK); Family Consistency **32.0%** (RU) / **24.0%** (KK).
+  - Temporal + Parameter-Aware BM25 (`temporal_bm25_rag_cot`, $k \in \{3, 5, 8, 12\}$): Solvable EM rises from **71.6%** ($k=3$) $\rightarrow$ **76.8%** ($k=5$) $\rightarrow$ **82.8%** ($k=8$, optimal budget, FCS = **46.0%**) $\rightarrow$ **82.0%** ($k=12$).
+  - Hybrid RRF (`hybrid_rag_cot_k8`, $k=8$): Solvable EM **84.0%**; Family Consistency **50.0%** (MRR = **0.766**).
+  - **Two-Stage Dense Reranked RAG (`dense_rag_cot_k8` & `dense_rag_program_cot_k8`, $k=8$)**: Solvable EM reaches **87.2%** (**88.0%** Tolerant Match), **84.0% Missing-Info Abstention**, and **60.0% Family Consistency** (MRR = **0.776**, Passage Recall = **44.2%**)!
+- **Condition 2 (Oracle Grounding)**:
+  - Text CoT (`oracle_cot`): Solvable Exact Match **94.4%** (RU) / **92.4%** (KK); Family Consistency **80.0%** (RU) / **72.0%** (KK).
+  - Program-Aided CoT (`oracle_program_cot`): Solvable Exact Match reaches **95.2%** (RU, **95.6%** Tolerant Match) / **92.0%** (KK), with **82.0% Family Consistency** and **84.0% Missing-Info Abstention** in Russian!
+- **Bilingual Parity**: Performance between Russian and Kazakh matches within 1.6–4.0% across all conditions.
+- Full live audit logs, metric tables, and RAG ablation designs are maintained in **`EXPERIMENT_STATUS.md`**.
 
 ---
 
@@ -331,14 +339,20 @@ python scripts/translate_kazakh_pipeline.py --family A-F01
 python scripts/translate_kazakh_pipeline.py --export-only
 
 # 4. Run experimental evaluations across any country & condition
-# Full dataset evaluation (all 300 questions, default):
-python scripts/run_eval.py --country in --split full --conditions closed_book_cot oracle_cot
-python scripts/run_eval.py --country eg --split full --conditions closed_book_cot oracle_cot
-python scripts/run_eval.py --country pl --split full --conditions closed_book_cot oracle_cot
-python scripts/run_eval.py --country kz --split full --conditions closed_book_cot oracle_cot
+# Complete 3x2 Matrix on Full Dataset (all 300 questions, default):
+python scripts/run_eval.py --country kz --split full \
+  --conditions closed_book_cot closed_book_program_cot bm25_rag_cot bm25_rag_program_cot oracle_cot oracle_program_cot \
+  --concurrency 20
 
-# Program-Aided CoT (Python execution sandbox):
-python scripts/run_eval.py --country kz --split dev --conditions closed_book_program_cot oracle_program_cot
+# Multi-Retriever RAG Ablations (Temporal BM25, Hybrid RRF, Dense Reranked at optimal k=8):
+python scripts/run_eval.py --country kz --split full \
+  --conditions temporal_bm25_rag_cot hybrid_rag_cot dense_rag_cot dense_rag_program_cot \
+  --top-k 8 --concurrency 20
+
+# Run on any other country:
+python scripts/run_eval.py --country in --split full --conditions closed_book_cot dense_rag_cot oracle_cot --top-k 8
+python scripts/run_eval.py --country eg --split full --conditions closed_book_cot dense_rag_cot oracle_cot --top-k 8
+python scripts/run_eval.py --country pl --split full --conditions closed_book_cot dense_rag_cot oracle_cot --top-k 8
 
 # Category-balanced dev or test subsets:
 python scripts/run_eval.py --country kz --split dev --conditions closed_book_cot oracle_cot

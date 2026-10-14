@@ -124,6 +124,18 @@ def compute_metrics(eval_records: list[dict[str, Any]]) -> dict[str, Any]:
             "acc_em": round(v_em / len(v_items), 4) if v_items else 0.0,
         }
 
+    # Aggregate retrieval metrics if present
+    ret_records = [r["retrieval_metrics"] for r in eval_records if r.get("retrieval_metrics")]
+    retrieval_summary = None
+    if ret_records:
+        n_ret = len(ret_records)
+        retrieval_summary = {
+            "passage_recall": round(sum(x["passage_recall"] for x in ret_records) / n_ret, 4),
+            "complete_evidence_recall": round(sum(x["complete_evidence_recall"] for x in ret_records) / n_ret, 4),
+            "source_doc_recall": round(sum(x["source_doc_recall"] for x in ret_records) / n_ret, 4),
+            "mrr": round(sum(x["mrr"] for x in ret_records) / n_ret, 4),
+        }
+
     return {
         "total_questions": total,
         "overall_exact_match": round(em_correct / total, 4) if total else 0.0,
@@ -136,6 +148,7 @@ def compute_metrics(eval_records: list[dict[str, Any]]) -> dict[str, Any]:
         "false_abstention_rate": round(false_abstained / len(solvable), 4) if solvable else 0.0,
         "total_families": total_families,
         "family_consistency_score": round(consistent_families / total_families, 4) if total_families else 0.0,
+        "retrieval": retrieval_summary,
         "by_period": period_metrics,
         "by_variant": variant_metrics,
     }

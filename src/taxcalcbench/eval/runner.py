@@ -22,6 +22,7 @@ from .dataset import load_evaluation_dataset
 from .extractors import extract_answer
 from .metrics import compute_metrics
 from .prompts import build_eval_prompt
+from .rag import BM25Retriever, HybridRRFTRetriever, evaluate_retrieval_hit, load_and_chunk_corpus
 
 load_dotenv()
 
@@ -43,9 +44,10 @@ async def call_model_with_retry(
     model: str,
     prompt: str,
     temperature: float = 0.0,
-    max_tokens: int = 8192,
-    timeout_seconds: float = 60.0,
-    max_retries: int = 10,
+    max_tokens: int = 16384,
+    timeout_seconds: float = 90.0,
+    max_retries: int = 5,
+    reasoning_effort: str = "low",
 ) -> str:
     """Call model with robust exponential backoff on transient errors and timeouts."""
     for attempt in range(max_retries):
@@ -56,8 +58,13 @@ async def call_model_with_retry(
                 temperature=temperature,
                 max_tokens=max_tokens,
                 timeout=timeout_seconds,
+                reasoning_effort=reasoning_effort,
             )
-            return response.choices[0].message.content or ""
+            content = response.choices[0].message.content or ""
+            if not content.strip() and attempt < max_retries - 1:
+                await asyncio.sleep(2.0)
+                continue
+            return content
         except (
             RateLimitError,
             InternalServerError,
@@ -83,6 +90,7 @@ async def evaluate_single_question(
     config: EvalConfig,
     work_dir: Path,
     sem: asyncio.Semaphore,
+    retriever: BM25Retriever | HybridRRFTRetriever | None = None,
 ) -> dict[str, Any]:
     """Evaluate one question and save its checkpoint."""
     q_no = question["no"]
@@ -99,7 +107,21 @@ async def evaluate_single_question(
         except Exception:
             pass
 
-    prompt = build_eval_prompt(question, condition, citations)
+    retrieved_chunks = None
+    retrieval_metrics = None
+    if "rag" in condition and retriever is not None:
+        query = f"{question.get('case_year', '')} {question.get('tax_category', '')} {question.get('question', '')}"
+        if isinstance(retriever, HybridRRFTRetriever):
+            mode = "dense" if condition.startswith("dense_rag") else "hybrid"
+            async with sem:
+                retrieved_chunks = await retriever.retrieve_async(
+                    client, query, top_k=config.top_k, case_year=question.get("case_year"), mode=mode
+                )
+        else:
+            retrieved_chunks = retriever.retrieve(query, top_k=config.top_k, case_year=question.get("case_year"))
+        retrieval_metrics = evaluate_retrieval_hit(retrieved_chunks, citations)
+
+    prompt = build_eval_prompt(question, condition, citations, retrieved_chunks=retrieved_chunks)
 
     try:
         async with sem:
@@ -112,6 +134,7 @@ async def evaluate_single_question(
                 max_tokens=config.max_output_tokens,
                 timeout_seconds=config.timeout_seconds,
                 max_retries=config.max_retries,
+                reasoning_effort=config.reasoning_effort,
             )
             elapsed = time.perf_counter() - t0
     except Exception as exc:
@@ -137,6 +160,7 @@ async def evaluate_single_question(
         "pred_value": pred_value,
         "pred_unit": pred_unit,
         "elapsed_seconds": round(elapsed, 2),
+        "retrieval_metrics": retrieval_metrics,
         "prompt": prompt,
         "raw_response": raw_response,
     }
@@ -161,9 +185,24 @@ async def run_evaluation_condition(
     print(f"=======================================================")
 
     client = get_api_client(timeout_seconds=config.timeout_seconds)
-    cond_dir = config.output_dir / config.country / condition
+    dir_name = f"{condition}_k{config.top_k}" if ("rag" in condition and config.top_k != 5) else condition
+    cond_dir = config.output_dir / config.country / dir_name
     work_dir = cond_dir / "work"
     work_dir.mkdir(parents=True, exist_ok=True)
+
+    retriever: BM25Retriever | HybridRRFTRetriever | None = None
+    if "rag" in condition:
+        print(f"Building statutory RAG index from {config.source_dir}...")
+        chunks = load_and_chunk_corpus(config.source_dir)
+        use_temporal = any(k in condition for k in ("temporal", "dense", "hybrid"))
+        bm25 = BM25Retriever(chunks, source_dir=config.source_dir, temporal_aware=use_temporal)
+        if condition.startswith(("dense_rag", "hybrid_rag")):
+            cache_dir = config.output_dir / config.country / "rag_index"
+            retriever = HybridRRFTRetriever(bm25, cache_dir=cache_dir)
+            await retriever.prewarm_questions(client, questions)
+        else:
+            retriever = bm25
+        print(f"Indexed {len(chunks)} statutory chunks (top_k={config.top_k}, temporal_aware={use_temporal})")
 
     sem = asyncio.Semaphore(config.max_concurrency)
 
@@ -176,12 +215,16 @@ async def run_evaluation_condition(
             config=config,
             work_dir=work_dir,
             sem=sem,
+            retriever=retriever,
         )
         for q in questions
     ]
 
     records = await asyncio.gather(*tasks)
     records.sort(key=lambda r: r["question_no"])
+
+    if isinstance(retriever, HybridRRFTRetriever):
+        retriever.save_cache()
 
     # Compute metrics
     metrics = compute_metrics(records)

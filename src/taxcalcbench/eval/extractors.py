@@ -82,10 +82,14 @@ def extract_answer(response_text: str, is_program: bool = False) -> tuple[str | 
     num_match = NUMBER_PATTERN.search(candidate)
     if num_match:
         val_str = normalize_numeric_string(num_match.group(0))
-        # Look for remaining unit
+        # Look for unit in candidate or on the last line of text
         unit_str = candidate.replace(num_match.group(0), "").replace("\\boxed", "").replace("{", "").replace("}", "").strip()
-        # Clean common unit words
-        unit_match = re.search(r"\b(KZT|PLN|CNY|IDR|PKR|EGP|INR|USD|EUR|тенге|руб|%|percent)\b", candidate, re.IGNORECASE)
+        last_line = [line.strip() for line in text.splitlines() if line.strip()][-1] if text.splitlines() else ""
+        unit_match = re.search(
+            r"\b(KZT|PLN|CNY|IDR|PKR|EGP|INR|USD|EUR|тенге|руб|%|percent)\b",
+            f"{candidate} {last_line}",
+            re.IGNORECASE,
+        )
         unit = unit_match.group(0) if unit_match else (unit_str if unit_str else None)
         return val_str, unit
 

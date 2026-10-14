@@ -108,18 +108,20 @@ The Development Set will be used exclusively to test, calibrate, and freeze:
 4. **Python Sandbox Execution Rules**: Tuning timeouts (5s limit), pre-imported libraries (`decimal.Decimal`), and variable capture.
 5. **Scoring Margins & Rounding**: Calibrating strict vs. lenient tolerances against ground-truth values.
 
-### 3.3 Empirical Findings on Development & Test Sets (Pilot Baseline)
-The pilot evaluation on Kazakhstan confirmed the stability of the evaluation harness (`src/taxcalcbench/eval/`) across both Russian (`kz`) and Kazakh (`kz_kk`) datasets, as well as the implementation of Program-Aided CoT (`sandbox.py`):
-* **Development Split (30 questions, 5 families)**:
-  * Closed-Book CoT: Solvable Exact Match of **68.0%** in Russian vs. **64.0%** in Kazakh.
-  * Oracle Grounding CoT: Solvable Exact Match of **100.0%** in Russian vs. **96.0%** in Kazakh.
-  * Program-Aided CoT (PoT): Closed-Book **60.0%** $\rightarrow$ Oracle Grounding **96.0%**.
-* **Frozen Test Split (270 questions, 45 families)**:
-  * Closed-Book CoT: Solvable Exact Match of **47.6%** in Russian vs. **49.3%** in Kazakh (Linguistic parity within $\pm 2\%$).
-  * Oracle Grounding CoT: Solvable Exact Match of **93.8%** in Russian vs. **92.0%** in Kazakh ($\Delta = \mathbf{+46.2\%}$ over closed-book).
-  * **Longitudinal Recency Bias**: Closed-book accuracy collapses from **55.6%** (2020–2026) to **26.7%** (2000–2009) ($\Delta_{\text{temp}} = 28.9\%$). Oracle grounding restores 2000s accuracy to **86.7%**.
-  * **Temporal Counterpart Brittleness**: Solvable base cases score 57.8%, but their paired temporal counterparts drop to 26.7% in closed-book mode due to parametric projection of modern rates onto historical years.
-* Complete live logs, metric tables, bilingual evaluation comparisons, and step-by-step reasoning plans are maintained in **`EXPERIMENT_STATUS.md`**.
+### 3.3 Empirical Findings Across the Complete $3 \times 2$ Matrix & RAG Ablations (Kazakhstan Full Dataset — 300 Questions)
+All 14 experimental conditions and RAG ablations have been executed across the full 300-question datasets for Kazakhstan (`kz` Russian and `kz_kk` Kazakh) using `gemini-3.8-flash` (`reasoning_effort="low"`):
+* **Condition 1: Closed-Book (No Retrieval)**:
+  * Text CoT (1.1): Solvable Exact Match of **51.2%** (RU) / **52.8%** (KK); Family Consistency of **16.0%** (RU & KK).
+  * Program-Aided CoT (1.2): Solvable Exact Match jumps to **60.8%** (RU, **+9.6%**) / **58.8%** (KK, **+6.0%**), demonstrating that Python execution eliminates mental arithmetic errors in ungrounded reasoning.
+* **Condition 3: Multi-Retriever Statutory RAG (Vanilla BM25 $\rightarrow$ Temporal BM25 $\rightarrow$ Hybrid RRF $\rightarrow$ Dense Reranked)**:
+  * Vanilla Lexical BM25 ($k=5$): **73.6%** Solvable EM (RU) / **69.6%** (KK), **32.0%** FCS (Doc Recall = **55.6%**, Passage Recall = **20.9%**, MRR = **0.533**).
+  * Temporal + Parameter-Aware BM25 ($k \in \{3, 5, 8, 12\}$): Enforcing statutory non-retroactivity ($Y_{\text{eff}} \le Y_{\text{case}}$) and annual parameter injection lifts Solvable EM from **71.6%** ($k=3$) $\rightarrow$ **76.8%** ($k=5$) $\rightarrow$ **82.8%** ($k=8$, optimal budget, FCS = **46.0%**) $\rightarrow$ **82.0%** ($k=12$).
+  * Hybrid RRF ($k=8$, Temporal BM25 + `gemini-embedding-001` RRF): Reaches **84.0%** Solvable EM and **50.0%** FCS (MRR = **0.766**).
+  * **Two-Stage Temporal + Dense Reranked RAG (`dense_rag_cot_k8` & `dense_rag_program_cot_k8`)**: Reaches **87.2% Solvable Exact Match** (**88.0% Tolerant Match**), **84.0% Missing-Info Abstention**, and **60.0% Family Consistency** (MRR = **0.776**, Passage Recall = **44.2%**) — closing within **7.2 percentage points** of the Oracle upper bound!
+* **Condition 2: Oracle Statutory Grounding**:
+  * Text CoT (2.1): Solvable Exact Match reaches **94.4%** (RU) / **92.4%** (KK); Family Consistency reaches **80.0%** (RU) / **72.0%** (KK).
+  * Program-Aided CoT (2.2): Solvable Exact Match reaches **95.2%** (RU, **95.6%** Tolerant Match) / **92.0%** (KK), with **82.0% Family Consistency** and **84.0% Missing-Info Abstention** in Russian!
+* Complete live logs, metric tables, bilingual evaluation comparisons, and RAG ablation results are maintained in **`EXPERIMENT_STATUS.md`**.
 
 ---
 
