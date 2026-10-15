@@ -103,25 +103,12 @@ In Kazakhstan, the category-balanced split selects families representing 5 disti
 ### 3.2 Calibration Objectives on the Development Set
 The Development Set will be used exclusively to test, calibrate, and freeze:
 1. **Passage Chunking Granularity**: Legal article/section boundaries vs. fixed token windows (300 vs. 600 vs. 1,000 tokens).
-2. **Retrieval Depth ($k$)**: Comparing top-$k \in \{3, 5, 8\}$ to balance statutory recall against LLM context clutter.
+2. **Retrieval Depth ($k$)**: Comparing top-$k \in \{3, 5, 8, 12\}$ to balance statutory recall against LLM context clutter.
 3. **Prompt Phrasing & Output Formatting**: Standardizing LaTeX box extraction (`\boxed{result} [UNIT]`) and JSON response parsing.
 4. **Python Sandbox Execution Rules**: Tuning timeouts (5s limit), pre-imported libraries (`decimal.Decimal`), and variable capture.
 5. **Scoring Margins & Rounding**: Calibrating strict vs. lenient tolerances against ground-truth values.
 
-### 3.3 Empirical Findings Across the Complete $3 \times 2$ Matrix & RAG Ablations (Kazakhstan Full Dataset — 300 Questions)
-All 14 experimental conditions and RAG ablations have been executed across the full 300-question datasets for Kazakhstan (`kz` Russian and `kz_kk` Kazakh) using `gemini-3.8-flash` (`reasoning_effort="low"`):
-* **Condition 1: Closed-Book (No Retrieval)**:
-  * Text CoT (1.1): Solvable Exact Match of **51.2%** (RU) / **52.8%** (KK); Family Consistency of **16.0%** (RU & KK).
-  * Program-Aided CoT (1.2): Solvable Exact Match jumps to **60.8%** (RU, **+9.6%**) / **58.8%** (KK, **+6.0%**), demonstrating that Python execution eliminates mental arithmetic errors in ungrounded reasoning.
-* **Condition 3: Multi-Retriever Statutory RAG (Vanilla BM25 $\rightarrow$ Temporal BM25 $\rightarrow$ Hybrid RRF $\rightarrow$ Dense Reranked)**:
-  * Vanilla Lexical BM25 ($k=5$): **73.6%** Solvable EM (RU) / **69.6%** (KK), **32.0%** FCS (Doc Recall = **55.6%**, Passage Recall = **20.9%**, MRR = **0.533**).
-  * Temporal + Parameter-Aware BM25 ($k \in \{3, 5, 8, 12\}$): Enforcing statutory non-retroactivity ($Y_{\text{eff}} \le Y_{\text{case}}$) and annual parameter injection lifts Solvable EM from **71.6%** ($k=3$) $\rightarrow$ **76.8%** ($k=5$) $\rightarrow$ **82.8%** ($k=8$, optimal budget, FCS = **46.0%**) $\rightarrow$ **82.0%** ($k=12$).
-  * Hybrid RRF ($k=8$, Temporal BM25 + `gemini-embedding-001` RRF): Reaches **84.0%** Solvable EM and **50.0%** FCS (MRR = **0.766**).
-  * **Two-Stage Temporal + Dense Reranked RAG (`dense_rag_cot_k8` & `dense_rag_program_cot_k8`)**: Reaches **87.2% Solvable Exact Match** (**88.0% Tolerant Match**), **84.0% Missing-Info Abstention**, and **60.0% Family Consistency** (MRR = **0.776**, Passage Recall = **44.2%**) — closing within **7.2 percentage points** of the Oracle upper bound!
-* **Condition 2: Oracle Statutory Grounding**:
-  * Text CoT (2.1): Solvable Exact Match reaches **94.4%** (RU) / **92.4%** (KK); Family Consistency reaches **80.0%** (RU) / **72.0%** (KK).
-  * Program-Aided CoT (2.2): Solvable Exact Match reaches **95.2%** (RU, **95.6%** Tolerant Match) / **92.0%** (KK), with **82.0% Family Consistency** and **84.0% Missing-Info Abstention** in Russian!
-* Complete live logs, metric tables, bilingual evaluation comparisons, and RAG ablation results are maintained in **`EXPERIMENT_STATUS.md`**.
+*(Note: All live experimental logs, baseline runs, and proof-of-concept ablation results are tracked separately in `EXPERIMENT_STATUS.md`).*
 
 ---
 
@@ -169,16 +156,25 @@ The experimental design evaluates models across a structured **3 Retrieval Regim
 
 ---
 
-### Condition 3: Multi-Retriever RAG (Official National Statutory Corpus)
+### Condition 3: Multi-Retriever RAG (Standard Baselines vs. Proposed Advanced Architectures)
 - **Concept**: Models receive passages retrieved from the official statutory corpus (`data/kz/sources/`).
-- **Evaluated Retriever Architectures**:
-  To benchmark retrieval performance thoroughly, we test four distinct retrieval configurations:
-  1. **Lexical Retriever (BM25)**: Tuned using language-specific Snowball Russian stemming. Strong on exact statutory numbers, article numbers, and specialized legal terminology.
-  2. **Dense Semantic Retriever**: Multilingual dense embeddings (`BGE-M3` or Google `text-embedding-004`). Effective at semantic paraphrasing and conceptual legal queries.
-  3. **Hybrid Retriever (BM25 + Dense)**: Reciprocal Rank Fusion (RRF) combining lexical and dense rankings:
+- **A. Standard Off-the-Shelf Baselines (Testing Existing Methods First)**:
+  To benchmark existing retrieval methods fairly without custom heuristics, we evaluate four standard baselines:
+  1. **Lexical Retriever (Vanilla BM25)**: Pure keyword/token frequency and inverse document frequency matching. Strong on exact statutory numbers, article numbers, and specialized legal terminology, but blind to semantic paraphrases and temporal version dates.
+  2. **Dense Semantic Retriever**: Multilingual dense embeddings (`gemini-embedding-001` or `BGE-M3`). Effective at semantic paraphrasing and conceptual legal queries, but prone to blurring across historical versions or jurisdictions.
+  3. **Hybrid Retriever (BM25 + Dense RRF)**: Reciprocal Rank Fusion (RRF) combining lexical and dense rankings:
      $$\text{RRF Score}(d) = \sum_{m \in \{\text{BM25}, \text{Dense}\}} \frac{1}{60 + \text{rank}_m(d)}$$
-  4. **Hybrid + Cross-Encoder Reranker**: Top-20 candidates from hybrid retrieval re-ranked using `bge-reranker-large` or `cohere-rerank-v3` to extract the top-$k$ most contextually relevant provisions.
-- **Context Budgets**: Top-$k \in \{3, 5, 8\}$ retrieved chunks.
+  4. **Standard Cross-Encoder Reranker**: Top-20 candidates from hybrid retrieval re-ranked using an off-the-shelf reranker (`bge-reranker-large` / `cohere-rerank-v3`).
+- **B. Proposed Advanced Research Directions (Phase 2 Methodological Contributions)**:
+  Once standard baselines establish the retrieval bottleneck, we evaluate two novel domain-informed architectures:
+  1. **Direction 1: FINCARDS-Style Structured Jurisdiction & Period-Aware Reranking**:
+     - Rather than ad-hoc keyword weighting, each statutory chunk is indexed into a structured **TaxCard / LegalCard** schema: `[Jurisdiction, Law Title, Effective Period (rule_applies_from -> rule_applies_until), OECD Tax Category, Taxpayer Entity, Statutory Rates/Thresholds]`.
+     - A FINCARDS-style structured reranker scores candidate cards by explicitly aligning the query's extracted `(Jurisdiction, Case Year, Tax Base)` against the card's structured fields, eliminating both **Wrong-Version (E3)** and **Wrong-Country (E2)** errors in a principled, generalizable manner.
+  2. **Direction 2: Dual-Layer Thinking-Trace RAG (Agentic Solution Memory $\rightarrow$ Human Expert Test Set)**:
+     - Adds a **second retrieval layer** over a corpus of verified step-by-step calculation traces (`gold_steps`).
+     - **Layer 1 (Law Retrieval)**: Retrieves the applicable statutory articles from the official government corpus.
+     - **Layer 2 (Thinking-Trace Retrieval)**: Retrieves 1–3 analogous worked step-by-step solutions from our **agent-generated dataset (2,400 verified questions with `gold_steps`)** to serve as structural reasoning exemplars when evaluating on **human-expert-created questions** (or cross-family questions).
+- **Context Budgets**: Top-$k \in \{3, 5, 8, 12\}$ retrieved chunks.
 - **Reasoning Modalities**: Both CoT (3.1) and Program-Aided CoT (3.2).
 
 ---

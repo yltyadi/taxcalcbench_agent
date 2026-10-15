@@ -156,12 +156,15 @@ Every evaluation question is tested across a structured $3 \times 2$ grid:
    - *2.2 Oracle Program-Aided CoT*: Receives gold statutory provisions and executes Python code.
    - *Objective*: Isolates legal comprehension and math from retrieval failure.
 3. **Condition 3: Multi-Retriever RAG (Official Statute Corpus)**
-   - Benchmarks four retrieval architectures:
-     - **Lexical (BM25)**: Tuned with language stemmers (Snowball for Russian/Kazakh).
-     - **Dense Semantic**: Multilingual embeddings (`BGE-M3` or Google `text-embedding-004`).
-     - **Hybrid**: Reciprocal Rank Fusion (RRF) combining BM25 + Dense.
-     - **Hybrid + Cross-Encoder Reranker**: Top candidates reranked using `bge-reranker-large`.
-   - Context budgets: Top-$k \in \{3, 5, 8\}$ retrieved chunks.
+   - **Standard Baselines**:
+     - **Lexical (Vanilla BM25)**: Keyword/stem matching.
+     - **Dense Semantic**: Multilingual embeddings (`gemini-embedding-001` or `BGE-M3`).
+     - **Hybrid RRF**: Reciprocal Rank Fusion combining BM25 + Dense.
+     - **Standard Cross-Encoder Reranker**: Top candidates reranked using `bge-reranker-large`.
+   - **Phase 2 Advanced Research Directions**:
+     - **FINCARDS-Style Structured Reranking**: Structuring statutory chunks into `LegalCard` / `TaxCard` schemas (`Jurisdiction`, `Effective Period`, `OECD Category`, `Taxpayer Scope`, `Parameters`) to make retrieval explicitly period- and jurisdiction-aware.
+     - **Dual-Layer Thinking-Trace RAG**: Adding a second retrieval layer over step-by-step calculation traces (`gold_steps` from the 2,400 agent-generated questions) to guide solving human-expert benchmark questions.
+   - Context budgets: Top-$k \in \{3, 5, 8, 12\}$ retrieved chunks.
    - Tested under both **CoT (3.1)** and **Program-Aided CoT (3.2)**.
 
 ### B. Corpus Context Scopes
